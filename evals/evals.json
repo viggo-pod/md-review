@@ -1,0 +1,164 @@
+{
+  "skill_name": "md-review",
+  "evals": [
+    {
+      "id": 0,
+      "name": "prd-scenario",
+      "prompt": "/md-review evals/docs/prd-test.md prd --solo --output report.md",
+      "expected_output": "PRD review: concurrency 1000 vs 5000 contradiction, retention 600/1000=30% miscalculation, >500-refund auto-approve, non-quantifiable acceptance criteria, broken link launch-checklist.md, missing 5W1H",
+      "files": [
+        "evals/docs/prd-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Catches concurrency contradiction (1000 vs 5000)",
+        "Catches retention miscalculation (600/1000 != 30%)",
+        "Catches refund-flow logic flaw (>500 auto-approved)",
+        "Flags missing/non-quantifiable acceptance criteria",
+        "Flags broken link docs/launch-checklist.md",
+        "Flags missing 5W1H / business background"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "api-scenario",
+      "prompt": "/md-review evals/docs/api-test.md api --solo --output report.md",
+      "expected_output": "API review: rate limit 200/min vs 6000/h, P99=0.5ms<200ms, response-envelope mismatch, 400 AUTH_FAILED conflict, missing auth, broken links",
+      "files": [
+        "evals/docs/api-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Catches rate-limit contradiction (200/min vs 6000/h)",
+        "Catches impossible P99 (0.5ms < 200ms)",
+        "Catches response-envelope inconsistency",
+        "Catches error-code contradiction (400 vs 401 AUTH_FAILED)",
+        "Flags auth not described inline",
+        "Flags broken links auth.md/signature.md"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "gdd-scenario",
+      "prompt": "/md-review evals/docs/gdd-test.md gdd --solo --output report.md",
+      "expected_output": "GDD review: damage formula 10-5=4, undefined crit multiplier, m/s vs px/s unit mismatch, magnet acquisition conflict, undefined stardust key, missing death/respawn boundary, broken links",
+      "files": [
+        "evals/docs/gdd-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Catches damage-formula error (10-5=4)",
+        "Catches undefined crit multiplier",
+        "Catches movement-speed unit mismatch (m/s vs px/s)",
+        "Catches missing death/respawn boundary",
+        "Catches undefined stardust-key mechanic",
+        "Flags broken links balance-table.md/level-details.md"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "generic-no-scenario",
+      "prompt": "/md-review evals/docs/generic-test.md --solo --output report.md",
+      "expected_output": "Generic mode: throughput contradiction, retention 30 vs 90 days, duplicate heading, undefined ODS/DWD, broken link; no Missing Scenario Content section",
+      "files": [
+        "evals/docs/generic-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Catches throughput contradiction (1000/1157/2000)",
+        "Catches data-retention contradiction (30 vs 90 days)",
+        "Catches duplicate heading (## 3 and ### 3 系统设计)",
+        "Flags undefined ODS/DWD/DWS terms",
+        "Flags broken link data-dictionary.md",
+        "Generic mode omits Missing Scenario Content section"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "clean-doc-precision",
+      "prompt": "/md-review evals/docs/clean-api.md api --solo --output report.md",
+      "expected_output": "PRECISION baseline: clean doc (no injected defects) should score high (>=85) with P0=0 and no false positives",
+      "files": [
+        "evals/docs/clean-api.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Overall score >= 85",
+        "P0 issue count = 0",
+        "No fabricated/false-positive issues (all issues carry original-text evidence)"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "error-paths",
+      "prompt": "Error-handling paths: missing file / binary / non-UTF-8 / invalid scenario value -> per SKILL.md Error Handling + solo exit-code protocol",
+      "expected_output": "Missing file -> exit 2; binary/non-UTF-8 detected and skipped without crash; invalid scenario lists valid values and reviews as generic",
+      "files": [],
+      "expectations": [
+        "Missing file handled as exit 2",
+        "Binary file detected and skipped without crash",
+        "Non-UTF-8 encoding detected and skipped",
+        "Invalid scenario lists the 14 valid values and reviews as generic"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "clean-prd-precision",
+      "prompt": "/md-review evals/docs/clean-prd.md prd --solo --output report.md",
+      "expected_output": "PRECISION baseline (Chinese PRD): clean doc scores >=85 with P0=0 and no false positives",
+      "files": [
+        "evals/docs/clean-prd.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Overall score >= 85",
+        "P0 issue count = 0",
+        "No fabricated/false-positive issues"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "clean-gdd-precision",
+      "prompt": "/md-review evals/docs/clean-gdd.md gdd --solo --output report.md",
+      "expected_output": "PRECISION baseline (Chinese GDD): clean doc scores >=85 with P0=0 and no false positives",
+      "files": [
+        "evals/docs/clean-gdd.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Overall score >= 85",
+        "P0 issue count = 0",
+        "No fabricated/false-positive issues"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "numbering-break-e2e",
+      "prompt": "/md-review evals/docs/numbering-break.md --solo --output report.md",
+      "expected_output": "E2E step-numbering detection: gap 1,2,4,5 and duplicate 1,2,2,3 flagged (Format), semantic-procedure gap also reported under Logic",
+      "files": [
+        "evals/docs/numbering-break.md"
+      ],
+      "expectations": [
+        "Flags step-numbering gap (1,2,4,5)",
+        "Flags duplicate numbering (1,2,2,3)",
+        "Semantic-procedure gap also reported under Logic"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "error-path-e2e",
+      "prompt": "E2E error paths: directory / non-md / missing file / binary -> path gate (validate_path.py) rejects with exit 2; valid doc proceeds",
+      "expected_output": "Path gate rejects directory, non-md, missing, binary targets (exit 2, no review proceeds); valid doc passes",
+      "files": [],
+      "expectations": [
+        "Directory rejected",
+        "Non-md file rejected",
+        "Missing file rejected",
+        "Binary file rejected",
+        "Valid doc proceeds"
+      ]
+    }
+  ],
+  "note": "Development/test toolchain (not part of the operational skill). Eval corpus: evals/docs/{prd-test,api-test,gdd-test,generic-test,adr-test,add-test,brd-test,mrd-test,fsd-test,gdo-test,tdd-test,ldd-test,concept-test,tld-test,tcd-test,clean-api,clean-prd,clean-gdd,binary-file,latin1-file,numbering-break}.md. Assertion checks: evals/scripts/verify_scripts.py (script function-point + error-path + path-gate + step-numbering checks; round-specific graders are not shipped with this repo). One-command regression: evals/run_self_test.sh (also validates evals/reports/{clean-api-report,error-paths-report,numbering-break-report}.md)."
+}
