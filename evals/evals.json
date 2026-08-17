@@ -158,6 +158,39 @@
         "Binary file rejected",
         "Valid doc proceeds"
       ]
+    },
+    {
+      "id": 16,
+      "name": "vague-unimplementable-rules",
+      "prompt": "/md-review evals/docs/vague-rules-test.md --solo --output report.md",
+      "expected_output": "Logic dimension flags unimplementable rules: no judgment standard (\"适时优化\"), no boundary (\"根据实际情况调整缓存策略\"), qualitative adjective without concrete value (\"合理水平\"/\"成本可控\"), scope mismatch (rule claims all requests, only read path covered); also catches timeout contradiction (5s vs 3s)",
+      "files": [
+        "evals/docs/vague-rules-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Flags rule without judgment standard (适时对慢查询进行优化)",
+        "Flags rule without boundary (根据实际情况调整缓存策略)",
+        "Flags qualitative adjective without concrete value (合理水平/成本可控)",
+        "Flags scope mismatch (适用于所有请求 vs 仅读路径)",
+        "Still catches the timeout contradiction (5s vs 3s) — no regression"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "sensitive-info-disclosure",
+      "prompt": "/md-review evals/docs/secret-disclosure-test.md --solo --output report.md",
+      "expected_output": "Logic dimension flags sensitive information disclosure: plaintext password in connection string, real-format API key (sk-live-...), internal hostname + private IP (10.20.30.40), PII (name + ID number + phone)",
+      "files": [
+        "evals/docs/secret-disclosure-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Flags plaintext credential (P@ssw0rd!2026 in connection string)",
+        "Flags real-format API key (sk-live-...) as disclosure",
+        "Flags internal hostname (db.internal.corp.example.com) / private IP (10.20.30.40)",
+        "Flags PII (name + ID number + phone in example data)"
+      ]
     }
   ],
   "note": "Development/test toolchain (not part of the operational skill). Eval corpus: evals/docs/{prd-test,api-test,gdd-test,generic-test,adr-test,add-test,brd-test,mrd-test,fsd-test,gdo-test,tdd-test,ldd-test,concept-test,tld-test,tcd-test,clean-api,clean-prd,clean-gdd,binary-file,latin1-file,numbering-break}.md. Assertion checks: evals/scripts/verify_scripts.py (script function-point + error-path + path-gate + step-numbering checks; round-specific graders are not shipped with this repo). One-command regression: evals/run_self_test.sh (also validates evals/reports/{clean-api-report,error-paths-report,numbering-break-report}.md)."

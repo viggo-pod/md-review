@@ -31,6 +31,12 @@ Mark all of the following as 🔴 Error, because they can break the implementati
 - [ ] Does every mechanism/feature state its boundary behavior where it is introduced? (a feature that depends on an unstated rule — e.g. a respawn feature with no death/failure rule, a continue feature with no state-restoration rule — cannot be implemented and is a P0 bug source)
 - [ ] Do scalability assumptions ("scale horizontally later", "support X in the future") have reserved interfaces or explicit unimplemented markers?
 
+### Vague and Unimplementable Rules
+- [ ] Does every rule carry a judgment standard an implementer can apply? ("optimize when appropriate", "adjust based on the situation" — nothing to judge = unimplementable, a P0 bug source)
+- [ ] Does every rule state where it applies and where it stops applying (boundary / threshold / limit)?
+- [ ] Are qualitative adjectives ("high damage", "fast response", "reasonable cost") backed by concrete values or a defined scale?
+- [ ] Does the rule's stated scope cover the cases it claims to cover? (a rule for "all users" that only defines one segment's behavior)
+
 ### Flow and State Errors
 - [ ] Is the operation order reasonable? (auth before business logic, validation before persistence)
 - [ ] Is the data flow closed-loop? (input → process → output → storage, nothing appearing/disappearing)
@@ -50,6 +56,12 @@ Mark all of the following as 🔴 Error, because they can break the implementati
 - [ ] Do interface parameters cover all required fields?
 - [ ] Is the error code definition complete? (success / failure / partial success)
 - [ ] Is backward compatibility considered for interface changes?
+
+### Sensitive Information Disclosure
+- [ ] Are real credentials (passwords / API keys / tokens / secrets) absent, with placeholders used instead?
+- [ ] Are internal-only URLs / hostnames / IP addresses / connection strings kept out of the document?
+- [ ] Is personally identifiable information (PII) or real customer data absent from examples?
+- [ ] Are example values clearly fictitious (e.g., `sk-test-...`, `example.com`)?
 
 ## Internal Consistency Checks
 
@@ -147,3 +159,5 @@ Mark all of the following as 🔴 Error, because they can break the implementati
 | Unsourced assertion | -1 each |
 | Unconsidered rebuttal | -1 |
 | Vague statement (multiple interpretations) | -0.5 per occurrence |
+| Unimplementable rule (no judgment standard or boundary) | -3 per occurrence |
+| Sensitive information disclosure (real secret / credential / internal address) | -8 each (P0) |

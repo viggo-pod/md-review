@@ -134,6 +134,8 @@ The core dimension. Focus on bugs that would make implementation wrong:
 - **Missing edge cases**: null/zero/negative/extreme values, timeout/retry, concurrency conflicts, data-volume limits
 - **Broken flows**: data flow without source or sink, unreasonable operation order, circular dependencies, dead branches
 - **Interface inconsistencies**: the same interface with conflicting parameters/returns/error codes across sections
+- **Vague/unimplementable rules**: no judgment standard or boundary, qualitative descriptors without concrete values
+- **Sensitive information disclosure**: real credentials, internal addresses, or PII left in the document
 - **Logical fallacies**: causal jumps, overgeneralization, false dichotomy, circular reasoning
 
 Rules: @./references/logic-rules.md
