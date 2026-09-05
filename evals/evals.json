@@ -16,7 +16,8 @@
         "Catches refund-flow logic flaw (>500 auto-approved)",
         "Flags missing/non-quantifiable acceptance criteria",
         "Flags broken link docs/launch-checklist.md",
-        "Scenario-completeness score equals the count ratio of unmet prd.md checklist items"
+        "Scenario-completeness score equals the count ratio of unmet prd.md checklist items",
+        "Sensitivity: solo exit code 1 (P0 >= 1 or overall < 75)"
       ]
     },
     {
@@ -34,7 +35,8 @@
         "Catches response-envelope mismatch",
         "Catches error-code conflict (400 AUTH_FAILED)",
         "Flags missing authentication section",
-        "Scenario-completeness score equals the count ratio of unmet api.md checklist items (per-endpoint items expanded)"
+        "Scenario-completeness score equals the count ratio of unmet api.md checklist items (per-endpoint items expanded)",
+        "Sensitivity: solo exit code 1 (P0 >= 1 or overall < 75)"
       ]
     },
     {
@@ -52,7 +54,8 @@
         "Catches unit mismatch (m/s vs px/s)",
         "Catches magnet acquisition conflict",
         "Flags undefined stardust currency",
-        "Flags missing death/respawn edge-case rules (gdd.md sub-checkboxes)"
+        "Flags missing death/respawn edge-case rules (gdd.md sub-checkboxes)",
+        "Sensitivity: solo exit code 1 (P0 >= 1 or overall < 75)"
       ]
     },
     {

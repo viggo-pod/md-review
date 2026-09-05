@@ -26,7 +26,7 @@ else
 fi
 
 echo ""
-echo "[2/5] Clean-document precision baseline (no false positives)"
+echo "[2/5] Precision & sensitivity baselines"
 PRECISION_ALL_PASS=1
 for CLEAN in clean-api clean-prd clean-gdd; do
   CLEAN_REPORT="$SKILL_DIR/evals/reports/${CLEAN}-report.md"
@@ -50,6 +50,34 @@ if [ "$PRECISION_ALL_PASS" -eq 1 ]; then
   ok "clean docs (api/prd/gdd): score>=85 and no P0 (precision baseline)"
 else
   bad "clean doc: score<85 or P0 flagged (possible false positive)"
+fi
+
+echo "  -- sensitivity baselines (injected-defect docs must be rejected: P0>=1 or score<75) --"
+SENS_ALL_PASS=1
+for DEFECT in prd-test api-test gdd-test; do
+  DEFECT_REPORT="$SKILL_DIR/evals/reports/${DEFECT}-report.md"
+  if [ -f "$DEFECT_REPORT" ]; then
+    python3 - "$DEFECT_REPORT" <<'EOF'
+import re, sys
+t = open(sys.argv[1], encoding="utf-8").read()
+m = re.search(r"Overall[^0-9]*([0-9.]+)/100", t)
+score = float(m.group(1)) if m else 100.0
+p0m = re.search(r"P0 bugs?:?\s*(\d+)", t)
+p0 = int(p0m.group(1)) if p0m else 0
+rejected = (p0 >= 1) or (score < 75)
+verdict = "rejected (solo exit 1)" if rejected else "WRONGLY PASSED the gate"
+print(f"    {sys.argv[1].rsplit('/',1)[-1]}: overall={score}/100  P0-count={p0}  -> {verdict}")
+sys.exit(0 if rejected else 1)
+EOF
+    [ $? -eq 0 ] || SENS_ALL_PASS=0
+  else
+    echo "  SKIP  ${DEFECT}-report.md not found — run an agent review of evals/docs/${DEFECT}.md and save the report to evals/reports/${DEFECT}-report.md"
+  fi
+done
+if [ "$SENS_ALL_PASS" -eq 1 ]; then
+  ok "defect docs (prd/api/gdd-test): rejected by gate (P0>=1 or score<75)"
+else
+  bad "defect doc wrongly passed the gate (sensitivity failure)"
 fi
 
 echo ""
