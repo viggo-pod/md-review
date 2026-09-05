@@ -54,11 +54,11 @@ Scan for these markers:
 
 ## PRD Standard
 
-The authoritative PRD required-content checklist lives in `references/scenarios/prd.md` — load it when reviewing with scenario `prd` and use its deduction scale. Do not apply a different scale here. For quick reference, the required sections are: Requirements Background, User Stories / Use Cases, Feature List, Flow / Sequence Diagrams, Data Requirements, Acceptance Criteria, Release Plan.
+The authoritative PRD required-content checklist lives in `references/scenarios/prd.md` — load it when reviewing with scenario `prd` and count items against its checklist. Do not apply a different scale here. For quick reference, the required sections are: Requirements Background, User Stories / Use Cases, Feature List, Flow / Sequence Diagrams, Data Requirements, Acceptance Criteria, Release Plan.
 
 ## API Document Standard
 
-The authoritative API required-content checklist lives in `references/scenarios/api.md` — load it when reviewing with scenario `api` and use its deduction scale. Do not apply a different scale here. For quick reference, the required sections are: Interface Overview, Authentication, Request/Response Format, Error Code Definitions, Examples, Change Log.
+The authoritative API required-content checklist lives in `references/scenarios/api.md` — load it when reviewing with scenario `api` and count items against its checklist. Do not apply a different scale here. For quick reference, the required sections are: Interface Overview, Authentication, Request/Response Format, Error Code Definitions, Examples, Change Log.
 
 ## Requirements Document Standard
 
@@ -133,13 +133,16 @@ Uses the SCQA framework:
 - [ ] **Defaults**: all defaults marked
 - [ ] **Value Ranges**: valid ranges for parameters
 
-## Scoring Guide
+## Rule Index (count-based)
 
-| Finding | Deduction |
+Each rule below is one countable item and applies to every document: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. The absence of required content (e.g., a missing overview or conclusion) is itself a finding — never an N/A. N/A is reserved for items that genuinely cannot apply to the document and must be justified in the report. Dimension score = (rules with no finding) ÷ (total rules) × 100.
+
+| # | Rule |
 |---|---|
-| Missing overview | -2 |
-| Missing required sections (per document type) | -1 each |
-| Incomplete markers (TODO/TBD) | -1 each |
-| Key terms undefined | -1 each |
-| Single-sentence paragraphs (need expansion) | -0.5 each |
-| No conclusion/summary | -1 |
+| 1 | Missing overview |
+| 2 | Missing required sections (per document type) |
+| 3 | Incomplete markers (TODO/TBD) |
+| 4 | Key terms undefined |
+| 5 | Single-sentence paragraphs (need expansion) |
+| 6 | No conclusion/summary |
+

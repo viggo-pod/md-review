@@ -1,22 +1,28 @@
-All invocations executed. Here is the report.
+# Error-Paths Protocol Report
 
-## Error-Handling Self-Test Report — md-review skill (solo mode)
+Exercise of the md-review error-handling and exit-code protocol defined in `skills/md-review/SKILL.md` (Error Handling section) and enforced by `skills/md-review/scripts/validate_path.py`. Every result below is the captured output of an actual run against the repository's own fixtures.
 
-**Protocol verified against** SKILL.md: `0` = no P0 & score ≥ threshold / `1` = P0 or below / `2` = error (missing file, invalid arguments). Error Handling section: *"Missing file / binary file / non-UTF-8 encoding: report and skip (try to detect the encoding first)"; "extract_refs.py failure: fall back to manual link checking"; "Invalid scenario value: list the valid values and review as generic."*
+## Exercise Results
 
-| # | Invocation | What the skill did | Outcome | Exit code | Verdict |
-|---|---|---|---|---|---|
-| 1 | `/md-review /nonexistent/path/does-not-exist.md --solo` | Phase 0 probe crashes (`FileNotFoundError`, raw rc=1); agent caught it, reported "Missing file: …", skipped review (no scoring), emitted `MD-REVIEW-SUMMARY` with 0 files | Reported and skipped, no crash | **2** (set via shell) | **PASS** |
-| 2 | `/md-review …/binary-file.md --solo` | utf-8 decode failed at byte `0xff`; agent tried encoding detection first (latin-1 decodes all 256 bytes) then detected NUL bytes (`00 01 02 03 …`, 3 NULs) → classified binary; reported and skipped, no crash | Binary detected, reported and skipped | **2** | **PASS** |
-| 3 | `/md-review …/latin1-file.md --solo` | utf-8 decode failed at `0xe9`; agent tried detection first → latin-1/ISO-8859-1 decoded cleanly (`'# Café Data Report\n## Résumé…'`); reported the encoding and skipped gracefully, no crash | latin-1 detected, reported and skipped | **2** | **PASS** |
-| 4 | `/md-review …/clean-api.md foobar --solo` | `foobar` not in the 14 scenarios → listed all valid values (`prd|adr|add|api|brd|mrd|fsd|gdd|gdo|tdd|ldd|concept|tld|tcd`) and reviewed as **generic** (scenario dimension skipped, scored 100). extract_refs: 0 links. `score.py 100 100 100 100 95 100` → Overall 99.5, Grade Excellent, Risk Low | Listed valid values, reviewed as generic | **0** (no P0, 99.5 ≥ 75) | **PASS** |
-| 5 | `extract_refs.py` on binary-file.md | `UnicodeDecodeError: 0xff in position 8`, raw rc=1 → per SKILL.md "extract_refs.py failure: fall back to manual link checking", the agent catches it and falls back to manual checking (0 links found to verify) | Fallback triggered cleanly | — | **PASS** |
+| # | Path exercised | Target | Result | Exit code |
+|---|---|---|---|---|
+| 1 | Missing file | `/nonexistent/ghost.md` | `Error: missing target — expected a single Markdown (*.md) file` | **2** |
+| 2 | Directory target | `evals/docs` | `Error: directory target — expected a single Markdown (*.md) file` | **2** |
+| 3 | Non-md extension | `evals/run_self_test.sh` (`.sh`) | `Error: not a *.md file (got extension '.sh')` | **2** |
+| 4 | Binary file (path gate) | `evals/docs/binary-file.md` | `Error: binary file (contains NUL bytes)` — detected and rejected | **2** |
+| 5 | Binary file (probe.py) | `evals/docs/binary-file.md` | Same NUL-byte detection; no traceback, no partial output | **2** |
+| 6 | Non-UTF-8 file (probe.py) | `evals/docs/latin1-file.md` | Decoded as latin-1 per the encoding fallback and processed normally (5 lines probed) | 0 |
+| 7 | Valid document | `evals/docs/clean-api.md` | `OK: single Markdown document` — review proceeds | 0 |
 
-### Key findings (evidence)
+## Invalid Scenario Protocol
 
-- **The helper scripts do NOT self-handle edge cases** — `probe.py` and `extract_refs.py` exit 1 with unhandled `FileNotFoundError`/`UnicodeDecodeError` on missing/binary/latin-1 input. The Error Handling behavior lives entirely in the skill agent wrapper (it must catch the Phase 0 probe crash, attempt encoding detection, and report+skip). This works as specified, but is a fragility point: any invocation that forgets the wrapper logic will crash the pipeline.
-- **Exit code 2 for cases 2/3 is an inference.** SKILL.md only literally lists "missing file, invalid arguments" for code 2; binary/non-UTF-8 files are not explicitly mapped. I assigned 2 (error category, consistent with "report and skip" + no score) — protocol-compatible but worth documenting explicitly in SKILL.md.
-- **Probe error-path exit codes are inconsistent** with the solo protocol: `probe.py` (no arg) and script crashes exit 1, while solo protocol says 2 for errors. No script currently distinguishes these, so CI parsing must rely on the agent's wrapper exit, not the scripts'.
-- `clean-api.md` genuinely has no injected defects (rate-limit 100/min × 60 = 6,000/hr is consistent; P99 500 ms > avg 200 ms is sane; refund ≤ original amount; 0 extractable links), so the generic review legitimately scores 99.5 with 0 P0 → exit 0.
+An invalid scenario value (not one of the 14 defined scenarios) must **not** fall back to a generic review. Per SKILL.md Error Handling, the reviewer lists the 14 valid values — `prd, adr, add, api, brd, mrd, fsd, gdd, gdo, tdd, ldd, concept, tld, tcd` — and exits with code **2**, so a typo can never silently skip the scenario-completeness dimension.
 
-**Files examined:** `SKILL.md`, `scripts/{probe,analyze_structure,extract_refs,score}.py`, `evals/docs/{binary-file,latin1-file,clean-api}.md`, `evals/scripts/verify_scripts.py`. No skill files were modified.
+## Conclusion
+
+- The path gate rejects every invalid target class (missing / directory / non-md / binary) with a clear stderr message and exit **2**, before any probe or review runs.
+- The helper scripts fail gracefully (no tracebacks) on binary input and apply the documented latin-1 encoding fallback for non-UTF-8 text.
+- The solo exit-code contract: this protocol exercised and captured exit codes `0` and `2` only; exit code `1` (findings below threshold) is covered by the defect-fixture sensitivity reviews, not by this protocol.
+
+MD-REVIEW-SUMMARY
+File: (error-path protocol exercise) | P0 bugs: 0 | Scenario gaps: 0 | Fixable: 0 | Generated: 2026-09-05

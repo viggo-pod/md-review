@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `add`. Checks whether the architecture de
 System layering + data flow + deployment topology
 - Includes: **Module List** (a list of all subsystems/services)
 
-## Required Content (deduct if missing)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Architecture Views
 - [ ] **Logical View**: Are the system functional decomposition, module responsibilities, and interaction relationships described?
@@ -25,6 +25,7 @@ System layering + data flow + deployment topology
 - [ ] **Interface Definitions**: Are API/service interface parameters, return values, and error codes complete?
 - [ ] **Data Flow**: Is the core data flow (input → processing → output → storage) closed-loop?
 - [ ] **Constraints and Assumptions**: Are technical constraints, business constraints, and assumptions declared?
+- [ ] **Tech-Stack Compatibility**: Is the chosen technology stack compatible with existing systems?
 
 ### Quality Attributes
 - [ ] **Quality Attribute Scenarios**: Are scenarios described for performance/availability/security/maintainability/scalability (stimulus → response → measure)?
@@ -51,15 +52,3 @@ System layering + data flow + deployment topology
 - Missing architecture diagram (pure text descriptions are hard to understand)
 - Incomplete interface definitions (missing parameters/error codes)
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Missing overall architecture diagram | -15 |
-| Missing any of logical/physical/data views | -10 per view |
-| Missing quality attribute scenarios | -12 |
-| Missing interface definitions | -12 |
-| Data flow not closed-loop | -10 |
-| Missing constraints and assumptions | -8 |
-| Missing key decision records | -8 |
-| Missing trade-off analysis | -10 |
-| Missing reliability/performance/security | -8 per item |

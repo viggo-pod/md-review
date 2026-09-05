@@ -22,9 +22,9 @@ Reviews ONE Markdown document per invocation across 14 document scenarios (PRD, 
 
 - **Bug-first positioning** — Logic (30%) is the top dimension: formula/number contradictions, missing edge cases, broken flows. P0 (blocking) issues are reported regardless of focused dimensions.
 - **14 scenarios** — each with its own required-content checklist (acceptance criteria, 5W1H, endpoint contracts, error codes, test cases, …).
-- **6 weighted dimensions** — Logic 30%, Scenario completeness 25%, Sections 15%, References 10%, Redundancy 10%, Format 10%. **Overall = Σ(dimension score × weight)**, 100-point scale.
+- **6 weighted dimensions** — Logic 30%, Scenario completeness 25%, Sections 15%, References 10%, Redundancy 10%, Format 10%. **Overall = Σ(dimension score × weight)**, 100-point scale; each dimension score is the ratio of satisfied items in its checklist or rule index (counted per applicable item) × 100.
 - **CI-ready** — `--solo` mode with exit-code gate (`--pass-threshold`, default 75) and a machine-readable `MD-REVIEW-SUMMARY` block as the last line of every report.
-- **Self-validating** — ships an eval suite (injected-defect fixtures, clean-doc precision baselines, error-path protocol, step-numbering detection) with a one-command regression harness (`bash evals/run_self_test.sh`).
+- **Self-validating** — ships 12 count-based evals, 8 reference reports, injected-defect fixtures, a trigger-query set, and a one-command regression harness (`bash evals/run_self_test.sh`).
 
 ## Scenarios
 
@@ -125,10 +125,11 @@ Score-table-only review of an API document.
 
 The repo includes its own evaluation suite under `evals/`:
 
-- `bash evals/run_self_test.sh` — 5/5 regression checks: script function-point verification, clean-doc precision baselines (no false positives on clean PRD/API/GDD), error-handling protocol (missing/binary/non-UTF-8 → exit 2), registry integrity, step-numbering-break detection.
-- `evals/docs/` — 21 fixtures: 15 scenario documents with injected defects, 3 clean documents, plus binary/non-UTF-8/step-numbering edge cases.
-- `evals/evals.json` — 10 eval definitions (scenario reviews, clean-doc precision, error paths, step-numbering).
-- `evals/reports/` — reference reports for clean documents and protocol edge cases (clean-api 95.0, clean-prd 93.3, clean-gdd 93.3, all 0 P0).
+- `bash evals/run_self_test.sh` — regression harness: scripted checks (script function-point verification via `verify_scripts.py`, registry integrity) always run; agent-based checks validate the reference reports — clean-doc precision (≥85, P0=0), defect-fixture sensitivity (rejected: P0≥1 or <75), error-handling protocol, step-numbering detection.
+- `evals/docs/` — 23 fixtures: 16 scenario documents with injected defects, 3 clean documents, plus binary/non-UTF-8/step-numbering/generic edge cases.
+- `evals/evals.json` — 12 count-based eval definitions (4 defect-scenario reviews, generic review, 3 clean-doc precision, error paths, step-numbering, vague-rules, sensitive-info, path-gate).
+- `evals/reports/` — 8 reference reports: 3 clean-doc precision, 3 defect-fixture sensitivity, error-path protocol, step-numbering detection.
+- `evals/trigger-eval-set.json` — 20 trigger/no-trigger queries validating skill activation.
 
 In the development benchmark (round 3, 40-run matrix), the skill passed 212/213 runs (99.5%), and 100% of injected defects were detected.
 

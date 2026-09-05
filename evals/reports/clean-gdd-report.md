@@ -2,38 +2,34 @@
 
 ## Basic Info
 
-- **Document**: `evals/docs/clean-gdd.md` | **Scenario**: GDD | **Size**: 185 lines / 989 words / ~1599 tokens
-- **Overall**: 93.3/100 | **Risk**: Low
+- **Document**: evals/docs/clean-gdd.md | **Scenario**: GDD (Game Design Document) | **Size**: 185 lines / 993 words / ~1,602 tokens
+- **Overall**: 91.4/100 | **Risk**: Low
 
 ## Executive Summary
 
-《星港维修员》GDD 是一份质量极高的设计文档：核心循环、机制表、公式、数值表、边界条件、测试用例与验收标准全部齐备且相互自洽。逐项验算后，收入公式、成功率公式、奖励表（Q-1~Q-6）、零件兑换比、平衡性小节中的净收益算术均无硬性矛盾，内部交叉引用（见 4.2/4.3/5.2/6.2 等）绝大多数准确。未发现 P0（阻断实现）级缺陷。主要问题集中在 5.3 系统依赖中的一处表述矛盾（扩建的声望门槛未定义且与 4.1/8 冲突，P1）、一处随机事件行为在两节中的描述不一致（P2），以及若干边界/细节缺口。文档已达到可发布状态，建议修复 P1/P2 后发布。
+This is a well-constructed Chinese-language GDD for the 2D side-view simulation game 《星港维修员》 (Starport Maintenance Chief, v1.1). Its strengths are a fully cross-consistent numeric system — every quest reward in §5.1 recomputes exactly from the §4.2 income formula, all clamp bounds are documented and reachable, tuning-knob safe ranges (§9) contain the actual values in use, and §8 acceptance criteria align with the §4.3 economy — plus an edge-case section (§6) that covers all four required boundary classes including dual-device login conflict and save rollback. Two genuine value gaps keep it from a higher score: the technician recruitment cost (a core action per §11 "What" and a listed credit sink in §4.3) is defined nowhere, and the part drop-rate for the "订单掉落" acquisition channel is undefined even though §10's margin math assumes purchase-only sourcing. Two minor logic warnings were also found: an arithmetic slip in the star-basis balance comparison (§10) and an ambiguous sentence in §5.3 that literally assigns expansion a reputation gate contradicted elsewhere. No P0 (bug-level) issues; fill the two missing values before implementation hand-off.
 
 ## Bug-Level Issues (P0, may break downstream implementation)
 
-未发现 P0（阻断级）问题。文档在公式、数值、流程上高度自洽，无实现阻断缺陷。
+None found. All formulas (§4.2: duration, income, success rate) have fully defined variables, explicit clamps, and worked examples that recompute correctly; no contradictory parameter values, no circular dependencies (§5.3 declares the reputation↔unlock loop as one-way accumulating and therefore deadlock-free), and no sensitive information (credentials, internal addresses, PII) is disclosed.
 
-## Missing Scenario Content (GDD required items)
+## Missing Scenario Content (gdd required items)
+
+Scenario checklist: 24 of 26 "Required Content" checkboxes satisfied. Both gaps fall under **Numerical Design** ("counted per occurrence" — each undefined key-value category is one unmet item):
 
 | # | Missing item | Note | Suggestion |
 |---|---|---|---|
-| 1 | 系统依赖（Inter-system Dependencies）— 机库扩建的声望门槛 | 5.3 声称"扩建与订单解锁均以声望为门槛"，但全文未给出扩建 1→2/2→3 级所需的声望值；4.3 仅列出信用点消耗（300/800），8 的验收标准暗示新号可从声望 0 直接扩建 | 明确扩建的声望门槛（或删除 5.3 中"扩建以声望为门槛"的表述，与 4.3/8 统一为纯信用点门槛） |
-| 2 | 边界条件（Edge Cases）— 维修中途的存档/恢复语义 | 自动存档点仅"接单/交付/扩建/签到"，不含"开始维修"；零件在维修开始时即消耗（失败不返还），若中途关闭游戏，已消耗零件与维修进度处于未存档区间，恢复后状态歧义 | 补充说明：维修进行中关闭时，恢复后维修进度是暂停续行还是重置、零件是否返还 |
+| 1 | Numerical Design — technician recruitment cost | §4.3 lists 招聘 (recruit) as a credit-point sink but gives no cost (only expansion has 300/800); §5.3 states "招聘技师的信用点消耗回馈到经济系统产出" (the cost exists and feeds the economy); §11 "What" lists 招聘 as a core player action; §5.2's "技师 8 名（1-5 星各档位）" does not say how many technicians the player starts with vs. must recruit | Define the recruitment cost per technician tier and the initial roster size, in the §4.1/§4.3 tables |
+| 2 | Numerical Design — part drop rate | §4.3 lists "订单掉落" (order drops) as the second part-acquisition channel with no probability or quantity; §10's margin analysis (net = reward − part cost) implicitly assumes every part is purchased, so any real drop rate changes the actual margins and the claimed 30-day simulation inputs | Define drop chance/quantity per order type (普通/精制/特殊) in §4.3 |
 
 ## Issue Summary
 
 | # | Level | Dimension | Location | Description | Suggestion | Impact |
 |---|---|---|---|---|---|---|
-| 1 | 🟡 P1 | Logic | L111 (5.3) | "扩建与订单解锁均以声望为门槛"与 4.1/4.3/8 冲突：扩建的声望门槛从未定义，且新号（声望 0）须能在 15 分钟内完成扩建 | 为扩建补充声望门槛数值，或删除该表述、统一为纯信用点门槛 | 实现扩建解锁逻辑时门槛值缺失，无法编码 |
-| 2 | 🟡 P2 | Logic | L106 vs L112 | 随机事件"零件断供"：5.2 称"采购渠道暂停 2 小时"，5.3 称"降低库存补给速度"，两种行为不一致 | 统一为"暂停采购渠道 2 小时（订单掉落不受影响）"并同步 5.3 | 实现者按不同小节可能做出两种实现 |
-| 3 | 🟡 P2 | Logic | L170 (10) | 平衡性第二口径（含星级加成）中普通件沿用无星级净收益 20/60=0.33/秒，而精制/特殊件用星级后净收益（47/120、96/240）；普通件 1 星应为 23/60≈0.38/秒 | 将普通件修正为 1 星口径 23/60≈0.38/秒 | 数字口径不一致，结论（纯特殊最优）不受影响 |
-| 4 | 🟡 P2 | Logic | L134, L124 (6.3/6.1) | 维修中途的存档/恢复语义未定义：存档点不含"开始维修"，零件于开始时消耗，中途退出后零件去向与进度恢复方式不明 | 补充维修中途关闭游戏的恢复规则（暂停续行或重置 + 零件返还与否） | 存档/恢复实现存在歧义，可能丢件 |
-| 5 | 🟡 P2 | Logic | L100 (5.1) | 每日委托要求"3 单普通 + 1 单精制"，但精制订单需"机库 2 级 + 声望 300/800"解锁；解锁前精制槽位如何填充未说明 | 补充低声望期精制槽位的替补规则（如替换为普通/暂不发放） | 前期每日委托无法完成或槽位空洞 |
-| 6 | 🟢 P2 | References | L24 (2.3) | 交叉引用"见 6.3 存档与回退"与真实小节标题不符：6.3 题为"极端值/并发状态（Extreme Values & Concurrent State）"，无"存档与回退"小节 | 改为"见 6.3"（内容在 6.3 的"存档回退"条目内） | 读者按引用找不到对应标题 |
-| 7 | 🟢 P3 | Logic | L152 (8) | "非付费路径下 7 天可达成声望 600（模拟器验证）"仅声明未附数据；按 Q-1/Q-2/Q-3 声望值粗算，日均需约 86 声望，早期每日委托仅约 50-70，达标偏紧 | 附上经济模拟输出或降低门槛/放宽天数 | 验收标准可核查性不足 |
-| 8 | 🟢 P3 | Logic | L45 (4.1) | "初始信用点 500 恰好覆盖 1 次机库扩建与 3 单普通件采购"：300+3×10=330，500 并非"恰好"覆盖（余 170） | 改为"可覆盖"或调整描述 | 措辞与实际数值不符（不影响设计） |
-| 9 | 🟢 P3 | Logic | L13 vs L28 | 2.1 称核心循环 10-15 分钟一轮，2.4 称单次会话 10-20 分钟；两处数字不统一（循环长度⊂会话长度，不构成矛盾） | 统一为同一口径或在 2.4 注明"含 10-15 分钟完整循环" | 数值口径轻微不一致 |
-| 10 | 🟢 P3 | References | L184 (附录) | 外部链接 `https://docs.example.com/starport-balance` 指向保留示例域名，非真实地址 | 发布前替换为真实数值表文档 URL | 链接实际不可达 |
+| 1 | 🟡 Warning | Scenario completeness | §4.3/§5.2/§5.3 (lines 78, 104, 113) | Recruitment cost undefined for a core action and economy sink | Add cost per tier + starting roster to §4.3 | Economy cannot be simulated or the recruit feature implemented as specified |
+| 2 | 🟡 Warning | Scenario completeness | §4.3 (line 79) | Part drop rate/quantity undefined for the "订单掉落" channel | Define drop chance per order type in §4.3 | Drop channel unusable; §10 margins only valid if all parts purchased |
+| 3 | 🟡 Warning | Logic | §10 (line 170) | Star-basis balance comparison lists 普通件 0.33/秒, but the stated basis ("含星级加成后的实际报酬") requires (30×1.1−10)/60 = 23/60 ≈ 0.38/秒; 0.33 is the base-reward-basis value carried over | Recompute as ≈0.38/秒 (ordering 0.40 > 0.39 > 0.38 and the mixed-strategy conclusion are unchanged) | Balance appendix numbers unreliable as written |
+| 4 | 🟡 Warning | Logic | §5.3 (line 111) | "扩建与订单解锁均以声望为门槛" is ambiguous: read literally, expansion is reputation-gated — contradicting §4.3 (credit-only costs 300/800, no rep threshold anywhere) and §8 (a new account expands within 15 min after one Q-1, i.e. ~10 rep); the alternative reading ("the order lines that expansion unlocks are rep-gated") is consistent | Reword, e.g. "订单解锁以声望为门槛；扩建以信用点为消耗（见 4.3）；机库等级与声望互不依赖" | An implementer could add an undefined rep gate to expansion, or stall on a missing threshold |
 
 Levels: 🔴 Error (must fix) / 🟡 Warning (should fix) / 🟢 Suggestion (optional)
 
@@ -41,116 +37,83 @@ Levels: 🔴 Error (must fix) / 🟡 Warning (should fix) / 🟢 Suggestion (opt
 
 | Dimension | Weight | Score | Weighted | Issues | Severe |
 |---|---|---|---|---|---|
-| 1. Logic | 30% | 86 | 25.8 | 8 | 0 (bug-level) |
-| 2. Scenario completeness | 25% | 95 | 23.8 | 2 | 0 |
-| 3. Sections | 15% | 97 | 14.5 | 0 | 0 |
-| 4. References | 10% | 97 | 9.7 | 2 | 0 |
-| 5. Redundancy | 10% | 97 | 9.7 | 0 | 0 |
-| 6. Format | 10% | 98 | 9.8 | 0 | 0 |
-| **Overall** | 100% | - | **93.3** | **10** | **0** |
+| 1. Logic | 30% | 77.8 | 23.3 | 2 | 0 (bug-level) |
+| 2. Scenario completeness | 25% | 92.3 | 23.1 | 2 | 0 |
+| 3. Sections | 15% | 100 | 15.0 | 0 | 0 |
+| 4. References | 10% | 100 | 10.0 | 0 | 0 |
+| 5. Redundancy | 10% | 100 | 10.0 | 0 | 0 |
+| 6. Format | 10% | 100 | 10.0 | 0 | 0 |
+| **Overall** | 100% | - | **91.4** | **4** | **0** |
+
+Item counts behind the ratios (N/A constructs excluded from both numerator and denominator):
+
+- **Logic 7/9**: 9 index rules applicable; rules 3 (data/number inconsistency) and 7 (vague statement) triggered once each (Issues 3–4). Fallacy/rebuttal/assertion constructs exist (§10's strategy argument) and are satisfied; no sensitive information disclosed.
+- **Scenario 24/26**: 26 "Required Content" checkboxes (4 Core Design + 5 Systems/Mechanics incl. the parent Edge Cases + 4 Edge-Case sub-items + 3 Content Scope + 4 Experience/Quality + 6 5W1H); 2 unmet (Issues 1–2). All four Edge-Case sub-checkboxes (failure determination, fail/retry, extreme values, concurrent conflicts) are satisfied by §6.
+- **Sections 6/6**, **References 4/4** (rules 1/2/3/7 N/A — no internal file links, anchors, images, or heading links), **Redundancy 16/16**, **Format 3/3** (rule 3 N/A — no ordered lists).
 
 ## Top 5 Issues
 
-1. 5.3"扩建与订单解锁均以声望为门槛"与全文矛盾且扩建声望门槛缺失（P1）。
-2. "零件断供"事件在 5.2（采购渠道暂停 2 小时）与 5.3（降低补给速度）中行为描述不一致（P2）。
-3. 平衡性第二口径下普通件净收益漏加星级加成（0.33 vs 应为 0.38/秒）（P2）。
-4. 维修中途关闭游戏的存档/零件恢复语义未定义（P2）。
-5. 每日委托精制槽位在精制订单解锁前的替补规则缺失（P2）。
+1. Technician recruitment cost is undefined although 招聘 is a core player action (§11) and a listed credit sink (§4.3) — the economy cannot be completed without it.
+2. The "订单掉落" part-acquisition channel has no drop rate, and §10's margin math silently assumes purchase-only sourcing.
+3. §10's star-basis comparison reuses the base-basis value 0.33/秒 for 普通件 where ≈0.38/秒 is required by its own stated basis (conclusion unaffected).
+4. §5.3's "扩建与订单解锁均以声望为门槛" admits two readings, one of which contradicts §4.3 and §8 — needs a one-line reword.
 
 ## Detailed Issue List
 
-### 1. [P1] 扩建声望门槛缺失且与 4.1/8 冲突（Logic, L111）
+**Issue 1 — Recruitment cost undefined** (🟡, Scenario completeness)
+- Location: §4.3 economy table (line 78), §5.2 (line 104), §5.3 (line 113), §11 (line 176)
+- Original text: "信用点 | 交付订单、每日委托奖励 | 采购零件、扩建（1→2 级 300 / 2→3 级 800）、招聘" and "招聘技师的信用点消耗回馈到经济系统产出"
+- Description: 招聘 appears as a credit sink, a dependency edge, and a core action, but no cost value and no initial-vs-recruited roster split exist anywhere in the document.
+- Fix: add a recruitment cost per technician tier and the starting roster count to §4.1/§4.3.
+- Impact: the recruit feature and the economy balance cannot be implemented/simulated as specified.
 
-- **原文**：L111「扩建与订单解锁均以声望为门槛（扩建消耗见 4.3）」；L78「扩建（1→2 级 300 / 2→3 级 800）」；L45「初始信用点 500 恰好覆盖 1 次机库扩建…」；L150「新号从 0 开始可在 15 分钟内完成 Q-1 并扩建 1 次机库」。
-- **描述**：5.3 声称扩建以声望为门槛，但全文任何位置都未给出扩建所需的声望阈值；4.3 仅给出信用点消耗，8 的验收标准与 4.1 的设计理由均暗示新号（声望 0）可直接扩建。二者必居其一：要么扩建有未声明的声望门槛（则 4.1/8 错误），要么 5.3 表述有误（则 5.3 错误）。
-- **修复建议**：在 4.3 或 5.3 补充扩建 1→2/2→3 级的声望门槛；若设计为纯信用点门槛，删除 5.3 中"扩建…以声望为门槛"的表述。
-- **影响**：实现扩建解锁逻辑时门槛值缺失、无法编码；且与验收标准直接冲突。
+**Issue 2 — Part drop rate undefined** (🟡, Scenario completeness)
+- Location: §4.3 parts row (line 79)
+- Original text: "零件（普通/精制/特殊） | 采购（普通 10 / 精制 25 / 特殊 60 信用点）、订单掉落 | 维修消耗，失败不返还"
+- Description: the drop channel has no probability or quantity; §10's per-order margins (net = reward − full part cost) hold only if every part is purchased.
+- Fix: define drop chance/amount per order type in §4.3 (and note how drops interact with the §10 analysis).
+- Impact: acquisition economics under-determined; 30-day simulation inputs incomplete.
 
-### 2. [P2] "零件断供"事件行为两节不一致（Logic, L106 vs L112）
+**Issue 3 — §10 star-basis arithmetic slip** (🟡, Logic)
+- Location: §10 Balance, first bullet (line 170)
+- Original text: "按含星级加成后的实际报酬口径：特殊件（3 星 96/240 = 0.40/秒）> 精制件（2 星 47/120 ≈ 0.39/秒）> 普通件 0.33/秒（纯特殊最优）"
+- Description: 特殊 96 = 120×1.3−60 and 精制 47 = 60×1.2−25 both apply the star bonus; 普通件 at 1 star should be (30×1.1−10)/60 = 23/60 ≈ 0.38/秒, not 0.33/秒 (which is the base-reward-basis 20/60 from the preceding clause).
+- Fix: correct to ≈0.38/秒; the ordering 0.40 > 0.39 > 0.38 and the mixed-strategy conclusion stand.
+- Impact: minor — the balance conclusion is unchanged, but the comparison figures are internally inconsistent.
 
-- **原文**：L106「零件断供（零件**采购**渠道暂停 2 小时，订单掉落不受影响）」；L112「随机事件"零件断供"降低库存补给速度」。
-- **描述**："暂停 2 小时"与"降低补给速度"是两个不同的行为，实现者会得到两套实现。
-- **修复建议**：统一措辞为"采购渠道暂停 2 小时（订单掉落不受影响）"，同步更新 5.3。
-- **影响**：行为歧义，可能出现未预期的经济限制。
+**Issue 4 — §5.3 expansion-gate ambiguity** (🟡, Logic)
+- Location: §5.3, first bullet (line 111)
+- Original text: "扩建与订单解锁均以声望为门槛（扩建消耗见 4.3），两者互不依赖、无循环。"
+- Description: read literally, expansion is reputation-gated; §4.3 defines only credit costs (300/800) and no expansion rep threshold exists, while §8's acceptance (new account expands within 15 min after one Q-1, ≈10 rep) rules out any meaningful rep gate. The alternative reading — the order lines unlocked by expansion are rep-gated (consistent with §5.1's "机库 2 级 + 声望 300" style conditions) — is coherent.
+- Fix: reword to separate the two gates (order unlock = reputation; expansion = credit cost) and keep the no-cycle claim.
+- Impact: low-to-moderate — an implementer following the literal reading would block on a threshold that is nowhere defined.
 
-### 3. [P2] 平衡性第二口径普通件净收益漏加星级（Logic, L170）
+### Minor observations (informational, not counted in scores)
 
-- **原文**：L170「按含星级加成后的实际报酬口径：特殊件（3 星 96/240 = 0.40/秒）> 精制件（2 星 47/120 ≈ 0.39/秒）> 普通件 0.33/秒」。
-- **描述**：同一口径下精制/特殊件用星级后报酬（72−25=47、156−60=96），普通件却用无星级净收益 20/60=0.33；普通件为 1 星订单，应为 33−10=23 → 23/60≈0.38/秒。结论（纯特殊最优 0.40>0.39>0.38）不受影响。
-- **修复建议**：将普通件修正为 23/60≈0.38/秒。
-- **影响**：口径不一致，后续数值迭代时可能被误读。
-
-### 4. [P2] 维修中途存档/零件恢复语义未定义（Logic, L134/L124）
-
-- **原文**：L134「存档仅自动保存于状态切换点（接单/交付/扩建/签到）」；L124「成功与否在作业完成瞬间按公式结算一次」；L72「失败时零件不返还、订单保留」。
-- **描述**：零件于维修开始时消耗，但存档点不含"开始维修"；若维修中途退出，已消耗零件与进度处于未存档区间，恢复后是续行、重置还是零件返还均未定义。
-- **修复建议**：补充说明维修中途关闭游戏的恢复规则（如：进度随挂单存档、恢复后续行；或重置并返还零件）。
-- **影响**：存档/恢复实现存在歧义，可能丢件或产生不一致状态。
-
-### 5. [P2] 每日委托精制槽位解锁前行为缺失（Logic, L100）
-
-- **原文**：L100「每日委托：每天 3 单普通 + 1 单精制（系统随机刷新，随声望解锁逐步替换为更高级订单）」；L93/L95「精制订单解锁条件：机库 2 级 + 声望 300/800」。
-- **描述**：精制订单需声望 300/800 解锁，但每日委托自始至终要求"1 单精制"；解锁前该槽位如何填充（替补为普通？空缺？）未说明，且 2.3 将"3 单维修 + 1 单精制件"列为每日目标。
-- **修复建议**：补充低声望期精制槽位的替补规则（如替换为普通件、或每日委托奖励分级）。
-- **影响**：早期每日委托完成条件与订单解锁线冲突。
-
-### 6. [P2] 交叉引用标题不符（References, L24）
-
-- **原文**：L24「同时玩家可选择存档回退（见 6.3 存档与回退）」；L130「### 6.3 极端值/并发状态（Extreme Values & Concurrent State）」。
-- **描述**：引用的"6.3 存档与回退"小节标题不存在；回退内容实际在 6.3 的"存档回退"条目内。
-- **修复建议**：改为"见 6.3"。
-- **影响**：读者按引用找不到对应标题，轻微误导。
-
-### 7. [P3] "7 天 600 声望"验收标准缺数据（Logic, L152）
-
-- **原文**：L152「数值健康：非付费路径下 7 天可达成声望 600（模拟器验证）」。
-- **描述**：结果仅声明未附模拟数据；按声望值粗算（Q-1=10、Q-2=15、Q-3=20、每日委托 3 普通+1 精制），日均需约 86，而早期每日委托约 50-70，达标偏紧。
-- **修复建议**：附上经济模拟输出，或调整门槛/天数。
-- **影响**：验收可核查性不足。
-
-### 8. [P3] "恰好覆盖"措辞不准（Logic, L45）
-
-- **原文**：L45「初始信用点 500 | 恰好覆盖 1 次机库扩建与 3 单普通件采购，避免首日卡死」。
-- **描述**：300 + 3×10 = 330 ≠ 500，实际余 170，"恰好"用词不准确（防卡死意图成立）。
-- **修复建议**：改为"可覆盖"。
-- **影响**：措辞与实际数值不符，无设计影响。
-
-### 9. [P3] 会话时长口径不统一（Logic, L13 vs L28）
-
-- **原文**：L13「完整闭环在单次 10-15 分钟会话内可完成一轮」；L28「单次会话 10-20 分钟」。
-- **描述**：循环时长（10-15 分钟）与目标受众会话时长（10-20 分钟）口径不一；逻辑上循环⊂会话不矛盾，但易被误读为不一致。
-- **修复建议**：统一口径或在 2.4 注明包含 10-15 分钟完整循环。
-- **影响**：数值口径轻微不一致。
-
-### 10. [P3] 外部链接为示例域名（References, L184）
-
-- **原文**：L184「数值配置表：[数值配置表](https://docs.example.com/starport-balance)（外部文档，v1.1 同步）」。
-- **描述**：`docs.example.com` 为保留示例域名，非真实可访问地址。
-- **修复建议**：发布前替换为真实数值表文档 URL。
-- **影响**：链接实际不可达。
+- §4.1 labels the stat "效率" (5 星 180%) while §4.2 applies the bonus as additive time reduction (1−E, E≤0.8); the mapping +20%/星 ↔ +0.2 is stated and all examples agree, but a one-line note that the bonus reduces time additively rather than multiplying work speed would prevent misreading.
+- §2.3 "3 单维修 + 1 单精制" vs §5.1 "3 单普通 + 1 单精制": §5.1's precise definition governs; unify the wording.
+- §4.2 calls the 0.95 matched-case rate "保底" while §9's "成功率保底 / success_floor" is the 0.80 clamp floor; both carry explicit numbers, but renaming one avoids conflation.
+- Micro-edge behaviors unspecified (each resolvable by a one-line rule): part drops arriving at the 999/class inventory cap; 临时高额订单 spawning when the 5-slot pending area is full; the same random event drawing twice in one day (M_R stacking).
+- The verbatim sentence "余额不足时采购/扩建被拦截（余额最低为 0，不产生负余额）" appears in both §2.3 and §4.3 — keep one authoritative copy (§4.3) and cross-reference.
+- The appendix link targets the IANA-reserved example domain `https://docs.example.com/starport-balance` (curl: unreachable). All MUST-level link checks pass and example-domain anonymization is deliberate; replace with the real wiki URL before publishing.
 
 ## Fix Priority
 
-**P0（阻断级，必须修复）**：无。
-
-**P1（强烈建议）**：#1 扩建声望门槛缺失/矛盾（5.3 vs 4.1/4.3/8）。
-
-**P2（建议修复）**：#2 "零件断供"行为统一（5.2 vs 5.3）；#3 平衡性第二口径普通件数字修正（L170）；#4 维修中途存档/零件恢复语义；#5 每日委托精制槽位解锁前规则；#6 交叉引用"见 6.3 存档与回退"标题修正。
-
-**P3（可选）**：#7 验收标准附模拟数据；#8 "恰好覆盖"措辞；#9 会话时长口径统一；#10 替换示例域名链接。
+**P0 (bug-level / scenario gaps, must fix)**: none at bug level; the two scenario gaps (Issues 1–2) must be filled before implementation hand-off. | **P1 (strongly recommended)**: correct §10's 0.33 → ≈0.38; reword §5.3's expansion-gate sentence. | **P2 (optional)**: the six minor observations above.
 
 ## Highlights
 
-- 公式完整且示例可复算：4.2 收入/成功率/时长公式均含变量定义、取值范围与算例，TC-1/TC-2 与公式示例完全吻合。
-- 奖励表与公式逐项自洽：Q-1~Q-6 信用点（33/72/156）全部可由"基础报酬 × (1+0.1×星级)"复算，且注明不含声望系数。
-- 边界条件覆盖全面：6.1-6.3 覆盖失败判定、重试、极端值、并发与存档，且明确"无角色死亡"避免歧义。
-- 平衡性论证完整：10 采用双口径净收益对比并给出混合策略结论；数值全部外置 `config/values.yaml`，符合可调优要求。
+- Numeric system is genuinely cross-consistent: the five numeric credit rewards recompute exactly from the income formula (§5.1 note pins the basis; Q-6's 通关 reward is non-numeric and outside the check), the exchange ratios (2.5×/6×) and 50–67% margins in §4.3 recompute correctly, every tuning-knob safe range in §9 contains the value in use, and TC-1..TC-5 match their formulas.
+- §6 covers all four required edge-case classes with concrete values (24h timeout with no penalty, unlimited retry with a 3-fail hint, credit cap 99999 with overflow protection, part cap 999, dual-device read-only mode, save points and rollback with overwrite warning), and the clamp notes even prove the bounds are reachable (E=0.8 → factor 0.1).
+- §10 argues balance properly: it tests the dominant-strategy question under two accounting bases and concludes no single all-time-optimal strategy exists, cross-linked to the supply-cut event that constrains the pure-special route.
+- Inter-system dependencies (§5.3) are declared bidirectionally with an explicit no-deadlock argument (reputation only accumulates).
+- The externalized-config commitment (§9 → `config/values.yaml`, "代码不硬编码") is exactly what the Tuning Knobs checklist item wants.
 
 ## Auto-Fix Summary (--format fix)
 
-- 未启用 `--format fix`，本次为 `--format full`。所有条目均附带具体修复建议（Fixable: 10），无自动应用修改。
+Not run — this review executed with the default full format in solo mode; no mechanical fixes were applied. Fixed: 0 | Could not auto-fix: 0
 
 ---
 
 MD-REVIEW-SUMMARY
-File: evals/docs/clean-gdd.md | P0 bugs: 0 | Scenario gaps: 2 | Fixable: 10 | Generated: 2026-08-09T15:55:41Z
+File: evals/docs/clean-gdd.md | P0 bugs: 0 | Scenario gaps: 2 | Fixable: 4 | Generated: 2026-09-05T12:11:01Z

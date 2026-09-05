@@ -26,7 +26,7 @@ else
 fi
 
 echo ""
-echo "[2/5] Clean-document precision baseline (no false positives)"
+echo "[2/5] Precision & sensitivity baselines"
 PRECISION_ALL_PASS=1
 for CLEAN in clean-api clean-prd clean-gdd; do
   CLEAN_REPORT="$SKILL_DIR/evals/reports/${CLEAN}-report.md"
@@ -52,6 +52,34 @@ else
   bad "clean doc: score<85 or P0 flagged (possible false positive)"
 fi
 
+echo "  -- sensitivity baselines (injected-defect docs must be rejected: P0>=1 or score<75) --"
+SENS_ALL_PASS=1
+for DEFECT in prd-test api-test gdd-test; do
+  DEFECT_REPORT="$SKILL_DIR/evals/reports/${DEFECT}-report.md"
+  if [ -f "$DEFECT_REPORT" ]; then
+    python3 - "$DEFECT_REPORT" <<'EOF'
+import re, sys
+t = open(sys.argv[1], encoding="utf-8").read()
+m = re.search(r"Overall[^0-9]*([0-9.]+)/100", t)
+score = float(m.group(1)) if m else 100.0
+p0m = re.search(r"P0 bugs?:?\s*(\d+)", t)
+p0 = int(p0m.group(1)) if p0m else 0
+rejected = (p0 >= 1) or (score < 75)
+verdict = "rejected (solo exit 1)" if rejected else "WRONGLY PASSED the gate"
+print(f"    {sys.argv[1].rsplit('/',1)[-1]}: overall={score}/100  P0-count={p0}  -> {verdict}")
+sys.exit(0 if rejected else 1)
+EOF
+    [ $? -eq 0 ] || SENS_ALL_PASS=0
+  else
+    echo "  SKIP  ${DEFECT}-report.md not found — run an agent review of evals/docs/${DEFECT}.md and save the report to evals/reports/${DEFECT}-report.md"
+  fi
+done
+if [ "$SENS_ALL_PASS" -eq 1 ]; then
+  ok "defect docs (prd/api/gdd-test): rejected by gate (P0>=1 or score<75)"
+else
+  bad "defect doc wrongly passed the gate (sensitivity failure)"
+fi
+
 echo ""
 echo "[3/5] Error-handling protocol (agent-based; checks report when present)"
 ERR_REPORT="$SKILL_DIR/evals/reports/error-paths-report.md"
@@ -63,7 +91,7 @@ checks = {
     "missing-file exit 2": ("missing" in t.lower() and "**2**" in t),
     "binary detected/skipped": ("binary" in t.lower() and ("skip" in t.lower() or "detect" in t.lower())),
     "non-utf8 encoding detected": ("latin-1" in t.lower() or "encoding" in t.lower() or "utf-8" in t.lower()),
-    "invalid scenario lists valid values": ("valid" in t.lower() and "generic" in t.lower()),
+    "invalid scenario lists all 14 valid values with exit 2": all(s in t for s in ("prd", "adr", "add", "api", "brd", "mrd", "fsd", "gdd", "gdo", "tdd", "ldd", "concept", "tld", "tcd")) and "code **2**" in t,
 }
 for name, okv in checks.items():
     print(f"    {'PASS' if okv else 'FAIL'}  {name}")
@@ -81,9 +109,12 @@ import json, sys
 ok_reg = ok_trig = False
 try:
     evals = json.load(open(sys.argv[1]))
-    ids = sorted(e["id"] for e in evals["evals"])
-    ok_reg = len(evals["evals"]) == 12 and ids == [0, 1, 2, 3, 10, 11, 12, 13, 14, 15, 16, 17]
-    print(f"    evals.json: {len(evals['evals'])} evals, ids={ids} -> {'PASS' if ok_reg else 'FAIL'}")
+    ev = evals.get("evals", [])
+    ids = sorted(e["id"] for e in ev)
+    fields_ok = all(e.get(k) for e in ev for k in ("name", "prompt", "expected_output", "expectations"))
+    ok_reg = (evals.get("skill_name") == "md-review" and isinstance(ev, list) and len(ev) == 12
+              and ids == list(range(12)) and fields_ok)
+    print(f"    evals.json: skill_name={evals.get('skill_name')}, {len(ev)} count-based evals, ids 0-11, required fields present -> {'PASS' if ok_reg else 'FAIL'}")
 except Exception as e:
     print(f"    evals.json: FAIL ({e})")
 try:

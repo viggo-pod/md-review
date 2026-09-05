@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `adr`. Checks whether the architecture de
 ## Key Focus
 Decision context + trade-off logic + consequence estimation
 
-## Required Content (deduct if missing)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Decision Record Structure (Nygard template)
 - [ ] **Status**: Is the decision status marked (Proposed / Accepted / Superseded / Deprecated)?
@@ -45,15 +45,3 @@ Decision context + trade-off logic + consequence estimation
 - Rejected alternatives not listed
 - Consequences not stated (nobody knows the impact after the decision)
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Missing context | -20 |
-| Missing decision | -20 |
-| Missing rationale | -15 |
-| Missing alternatives | -15 |
-| Missing consequences | -15 |
-| Status not marked | -10 |
-| Title not descriptive | -5 |
-| No number/date | -5 |
-| Conflict with existing ADRs not stated | -10 |

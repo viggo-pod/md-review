@@ -55,7 +55,7 @@ Flag these weakening qualifiers:
 - Every chapter and section repeating the same context → explain once, in one place
 
 ### Repeated Examples
-- 3 examples with 95% identical commands, differing only in parameters → merge into one example with a comment
+- 3 examples with ≥95% identical commands (boundary included), differing only in parameters → merge into one example with a comment
   ```markdown
   # ❌ Redundant
   az storage account create -n myaccount1 -g mygroup -l eastus
@@ -158,23 +158,26 @@ Readers have limited working memory and attention; documents that bury the actio
   Run the server: `npm start`
   ````
 
-## Scoring Guide
+## Rule Index (count-based)
 
-| Finding | Deduction |
+Each rule below is one countable item and applies to every document: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. The absence of required content (e.g., a missing overview or conclusion) is itself a finding — never an N/A. N/A is reserved for items that genuinely cannot apply to the document and must be justified in the report. Dimension score = (rules with no finding) ÷ (total rules) × 100.
+
+| # | Rule |
 |---|---|
-| Filler words (in order to, etc.) | -0.5 per occurrence |
-| Unnecessary hedges | -0.5 each |
-| Echo headings | -1 per occurrence |
-| Repeated examples (>90% identical) | -1.5 per group |
-| Decorative emoji (more than 3) | -0.5 each |
-| Redundant lead-in paragraphs | -1 per occurrence |
-| Mergable similar sections | -2 |
-| Large content that should move to references | -1 per occurrence |
-| Announcing openers / preamble paragraphs | -1 per occurrence |
-| Closing pleasantries / recap paragraphs | -1 per occurrence |
-| Tangents ("by the way" asides) | -1 per occurrence |
-| Lists over 5 items left ungrouped | -1.5 each |
-| Vague time/effort estimates | -1 per occurrence |
-| Hedging adverbs without information | -0.5 per occurrence |
-| Idioms replacing literal action | -0.5 per occurrence |
-| Buried next action | -1 per occurrence |
+| 1 | Filler words |
+| 2 | Unnecessary hedges |
+| 3 | Echo headings |
+| 4 | Repeated examples (≥95% identical) |
+| 5 | Decorative emoji (more than 3) |
+| 6 | Redundant lead-in paragraphs |
+| 7 | Mergable similar sections |
+| 8 | Large content that should move to references |
+| 9 | Announcing openers / preamble paragraphs |
+| 10 | Closing pleasantries / recap paragraphs |
+| 11 | Tangents ("by the way" asides) |
+| 12 | Lists over 5 items left ungrouped |
+| 13 | Vague time/effort estimates |
+| 14 | Hedging adverbs without information |
+| 15 | Idioms replacing literal action |
+| 16 | Buried next action |
+

@@ -254,6 +254,27 @@ check("score: out-of-range → exit 2", run("score.py", "60", "70", "80", "150",
 check("score: non-numeric → exit 2", run("score.py", "60", "x", "80", "50", "70", "90").returncode == 2)
 check("score: bad --p0 → exit 2", run("score.py", "60", "70", "80", "50", "70", "90", "--p0", "abc").returncode == 2)
 
+r = run("score.py", "--items", "9:13")
+check("score: --items 9:13 → 69.2", r.returncode == 0 and "Item ratio: 9/13 = 69.2/100" in r.stdout)
+r = run("score.py", "--items", "0:0")
+check("score: --items 0:0 → 100 (non-applicable)", r.returncode == 0 and "Item ratio: 0/0 = 100.0/100" in r.stdout)
+r = run("score.py", "--items", "13:0")
+check("score: --items 13:0 → exit 2 (present > applicable)", r.returncode == 2)
+r = run("score.py", "--items", "9:13", "unexpected")
+check("score: --items trailing arg → exit 2", r.returncode == 2)
+r = run("score.py", "--items", "9:13", "--items", "8:10")
+check("score: --items duplicate → exit 2", r.returncode == 2)
+
+# Regression: ≤3-space indented ATX headings must be counted without crashing
+# (commit 5a1066a changed the heading predicate but left the level regex line-anchored → AttributeError)
+_ind = tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8")
+_ind.write("   ### Three-space indented\nBody text.\n\n# Normal\n")
+_ind.close()
+r = run("analyze_structure.py", _ind.name)
+check("analyze: indented ATX heading counted, no crash",
+      r.returncode == 0 and "Total headings: 2" in r.stdout)
+Path(_ind.name).unlink()
+
 print()
 print("=" * 70)
 print("CROSS-VERIFICATION — 4 test docs (scripts must parse + report key facts)")

@@ -1,6 +1,6 @@
 # Full Review Report Template
 
-Fill in this template during Phase 4. Generic mode (no scenario): omit the "Missing Scenario Content" section and the "2. Scenario completeness" row (that dimension is skipped and scored 100) — the in-template notes mark these.
+Fill in this template during Phase 4. Generic mode (no scenario): omit the "Missing Scenario Content" section and fill the "2. Scenario completeness" row with Score 100 / Weighted 25.0 (that dimension is non-applicable and scored 100) — the in-template notes mark these.
 
 # MD Review Report
 
@@ -47,7 +47,7 @@ Levels: 🔴 Error (must fix) / 🟡 Warning (should fix) / 🟢 Suggestion (opt
 | 6. Format | 10% | 90 | 9.0 | 1 | 0 |
 | **Overall** | 100% | - | **68.5** | **18** | **4** |
 
-> Generic mode (no scenario): omit the "2. Scenario completeness" row (the dimension is skipped and scored 100).
+> Generic mode (no scenario): keep the "2. Scenario completeness" row with Score **100** / Weighted **25.0** (the dimension is non-applicable and scored 100, keeping the overall consistent with `score.py`).
 
 ## Top 5 Issues
 
@@ -55,7 +55,7 @@ Levels: 🔴 Error (must fix) / 🟡 Warning (should fix) / 🟢 Suggestion (opt
 
 ## Detailed Issue List
 
-Each issue must include: location (line or section), original text (evidence), level, dimension, description, fix suggestion, impact.
+Each issue must include: location (line or section), original text (evidence — redact credentials, PII, and internal addresses; never copy raw sensitive values into the report written to stdout or `--output`), level, dimension, description, fix suggestion, impact.
 
 ## Fix Priority
 

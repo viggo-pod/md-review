@@ -13,7 +13,7 @@ Case numbering + test steps + input data + expected output + prerequisites
 - Includes: **Test Case Set** (with linked requirement IDs, priority, execution result)
 - Written by the QA team; the basis for automation scripts and manual testing
 
-## Required Content (deduct if missing)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Case Structure
 - [ ] **Case Numbering**: Does each case have a unique number (TC-1, TC-2...)?
@@ -52,16 +52,3 @@ Case numbering + test steps + input data + expected output + prerequisites
 - Cases without requirement traceability (coverage cannot be proven)
 - Only happy-path flows covered (no boundary/exception)
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Case numbering missing | -15 |
-| Test steps not executable | -12 |
-| Expected results not verifiable | -15 |
-| Boundary values not covered | -10 |
-| Exception scenarios not covered | -12 |
-| Prerequisites missing | -10 |
-| No requirement traceability | -12 |
-| Cases without priority | -5 |
-| No execution result field | -5 |
-| Incomplete coverage (happy path only) | -10 |

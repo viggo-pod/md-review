@@ -56,8 +56,28 @@ if __name__ == "__main__":
         except (IndexError, ValueError):
             print("Error: --p0 requires an integer argument", file=sys.stderr)
             sys.exit(2)
+        if p0 < 0:
+            print("Error: --p0 must be >= 0", file=sys.stderr)
+            sys.exit(2)
         del args[i:i + 2]
-    if len(args) < 6:
+    if "--items" in args:
+        i = args.index("--items")
+        try:
+            present, applicable = (int(x) for x in args[i + 1].split(":"))
+        except (IndexError, ValueError):
+            print("Error: --items requires PRESENT:APPLICABLE integers", file=sys.stderr)
+            sys.exit(2)
+        del args[i:i + 2]
+        if args or "--items" in args:
+            print("Error: --items takes exactly one PRESENT:APPLICABLE value and no other arguments", file=sys.stderr)
+            sys.exit(2)
+        if present < 0 or applicable < 0 or present > applicable:
+            print("Error: --items requires 0 <= PRESENT <= APPLICABLE", file=sys.stderr)
+            sys.exit(2)
+        ratio = 100.0 if applicable == 0 else present / applicable * 100.0
+        print(f"Item ratio: {present}/{applicable} = {ratio:.1f}/100")
+        sys.exit(0)
+    if len(args) != 6:
         print("Usage: python3 score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]")
         sys.exit(1)
     try:

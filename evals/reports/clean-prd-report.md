@@ -1,117 +1,108 @@
-Solo-mode review delivered to stdout: the `--output` file was not written in this run, so the full report is printed here (solo mode always delivers the complete report to stdout regardless of file-write outcome).
-
----
-
 # MD Review Report
 
 ## Basic Info
 
-- **Document**: clean-prd.md | **Scenario**: PRD | **Size**: 130 lines / 588 words / ~1085 tokens
-- **Overall**: 93.3/100 | **Risk**: Low
+- **Document**: evals/docs/clean-prd.md | **Scenario**: PRD | **Mode**: solo (--format full) | **Size**: 130 lines / 588 words / ~1085 tokens
+- **Review date**: 2026-09-05 | **Language of reviewed doc**: Chinese (report in English)
+
+Overall: 90.8/100 | Risk: Low
 
 ## Executive Summary
 
-《轻步》PRD 是一份结构完整、数值自洽度很高的产品需求文档：背景有市场数据支撑（国家体育总局报告、艾瑞咨询增速、1200 人问卷），目标用户、用户故事、需求清单（FR-1~FR-8 带优先级）、量化验收标准、边界与异常、测试用例、数据需求、发布计划、成功指标、5W1H 全部齐备且互相引用一致。审查未发现 P0 级（会阻断实现的）缺陷，但存在 9 个逻辑层问题（5 个 P1）与 3 项场景清单内容未闭环，主要集中在：补卡与连续天数、幂等键表述与数据模型、好友数据表缺失、未设目标时首次打卡行为、以及产后用户故事与严格连击规则的设计张力。建议在交予开发前修复上述 P1；修复后文档可发布。
+This is a well-structured, unusually rigorous PRD for the "轻步" fitness check-in app. Its main strengths are a fully numbered requirement list (FR-1..FR-8) with priorities and dependency declarations, quantified acceptance criteria per requirement (exact ranges, latency bounds, retry counts), testable edge cases, key-flow test cases (TC-1..TC-5), and a sourced market background — every item of the PRD scenario checklist is present and properly specified (20/20). No P0 (implementation-breaking) bugs were found. The residual defects are four low-severity consistency/specification gaps: one conflicting data-deletion deadline between the NFR table and the Edge Cases section, one under-specified timeout/auto-sync recovery path, one capability claim ("desktop view-only") that is untracked in Scope/Requirements/Release Plan, and one undefined metric term ("有效打卡") in the North Star indicator. Recommendation: publish-ready after the two Warning-level wording fixes; all four issues are one-line fixes.
 
 ## Bug-Level Issues (P0, may break downstream implementation)
 
-未发现 P0 级问题。
+None found. All formula-like rules carry defined variables and safe ranges (e.g., the weekly completion rate divisor "每周运动天数目标" is bounded to 1-7 days, so division by zero cannot occur), flows are closed-loop (check-in → validation → storage → streak update → dashboard; idempotency guaranteed by the `daily_checkin(user_id, date)` unique index), and no credentials, internal addresses, or PII appear in the document.
 
 ## Missing Scenario Content (PRD required items)
 
-| # | Missing item | Note | Suggestion |
-|---|---|---|---|
-| 1 | 数据需求（FR-5 支撑） | FR-5 好友互动需要好友关系数据，但 §11 数据需求仅列出 `friend_visibility`（可见性开关），未定义好友关系表 | 补充好友关系表（如 `friend`：user_id, friend_id, status, created_at） |
-| 2 | 业务规则（补卡 → 连续天数） | §5.1 补卡仅规定"补卡后该日按达标/未达标重新判定"，未定义补卡达成后对连续天数的重算规则 | 明确补卡达成日是否回溯计入连续天数，以及重算口径 |
-| 3 | 业务规则（未设目标时首次打卡） | FR-1 依赖 FR-2（"目标存在才可判定打卡达标"），但未定义新用户未设置目标时能否打卡、如何判定 | 明确目标设为必填（首次打卡前引导）或给出默认目标 |
+None. All 20 required-content items of the PRD checklist are present and specified:
 
-> 缺失/未闭环项按清单逐条列出，未合并。
+| Checklist group | Items present |
+|---|---|
+| Requirements definition | Background (§1, sourced data) / Target Users (§2, 3 personas) / User Stories (§3, 4 well-formed stories) / Requirements List (§4, FR-1..FR-8 with priority) |
+| Functional & non-functional | Feature descriptions (§5.1) / NFRs with metrics (§5.2) / Priority P0-P2 (§4) / Dependencies (§4) |
+| Scope & acceptance | In/Out-of-Scope (§6) / Acceptance criteria per FR (§7) / Edge cases (§8) / Test cases (§9, TC-1..TC-5) |
+| 5W1H | Who / What / When / Where / Why / How (§14, each answered) |
+| Supporting documents | Flow with exception branches (§10) / Data requirements (§11) / Release plan (§12) / Tracking metrics (§13) |
 
 ## Issue Summary
 
 | # | Level | Dimension | Location | Description | Suggestion | Impact |
 |---|---|---|---|---|---|---|
-| 1 | 🟡 P1 | Logic | §8 (L83) vs §11 (L102) | 幂等表述为"同一分钟内的重复打卡请求返回原记录"，但幂等键为 日期+用户ID（唯一索引），同一日跨分钟第二次提交行为未定义 | 统一为"同一打卡日仅一条记录"，明确同日第二次提交语义 | 按分钟去重会与唯一索引冲突 |
-| 2 | 🟡 P1 | Logic | §5.1 补卡 (L47) | 补卡后该日重新判定达标/未达标，但补卡对连续天数的影响未定义 | 明确补卡达成日对连续天数的重算规则 | 连击显示与记录不一致 |
-| 3 | 🟡 P1 | Logic | FR-5 (L32) vs §11 (L102) | 好友排名依赖好友关系数据，数据需求缺少好友关系表 | 补充 `friend` 表定义 | 实现者无从存储好友关系 |
-| 4 | 🟡 P1 | Logic | 依赖 (L37) / §5.1 (L44) | "目标存在才可判定打卡达标"但未定义无目标用户的首次打卡流程 | 明确目标必填引导或默认目标 | 核心打卡流存在未定义分支 |
-| 5 | 🟡 P1 | Logic | 用户故事 (L20) vs 连击规则 (L45) | 产后用户故事承诺"身体不适可降强度不被迫达标"，但"已打卡未达标日连续天数归零"恰好惩罚低强度日 | 低强度日不中断连击，或连击按"打卡"而非"达标"计算 | 目标用户诉求与规则矛盾 |
-| 6 | 🟢 P2 | Logic | §5.2 (L56) vs §8 (L84) | "30 天内彻底删除数据"与"30 天内可申诉恢复"表述张力 | 统一为"停用→保留 30 天供申诉→30 天后物理删除" | 合规口径含糊 |
-| 7 | 🟢 P2 | Logic | §5.1 (L43) vs §12 (L108) | 打卡流程含"选择运动模板"，但 FR-7 12 套模板 v1.1 才发布，v1.0 可用性未说明 | 注明 v1.0 仅自定义打卡 | 发布计划与流程描述冲突 |
-| 8 | 🟢 P2 | Logic | §5.1 (L46) / AC FR-3 (L70) | "周完成率"未定义周界；FR-2 周目标即时生效使当周分母可变 | 明确周界与周中改目标折算规则 | 看板数值口径不确定 |
-| 9 | 🟢 P2 | Logic | 头部 (L3) vs §12 (L110) | 文档版本号 v1.2 与发布版本 v1.2 同名，附录还引用 privacy-v1.2 | 文档版本改用修订号 | 版本引用歧义 |
-| 10 | 🟡 P1 | Scenario | §11 数据需求 | 见 Missing #1 | 见 Missing #1 | 见 Missing #1 |
-| 11 | 🟡 P1 | Scenario | §5.1 补卡 | 见 Missing #2 | 见 Missing #2 | 见 Missing #2 |
-| 12 | 🟡 P1 | Scenario | §5.1 达标判定 | 见 Missing #3 | 见 Missing #3 | 见 Missing #3 |
-| 13 | 🟢 P2 | Sections | §5.2 (L54) / §11 (L102) | 缩写 DAU、P95 首次使用未展开（TLS、CSV 亦未注明） | 首次出现处注明全称 | 非技术读者理解门槛 |
-| 14 | 🟢 P2 | Redundancy | §14 (L118-125) | 5W1H 与 §1-§3 内容高度重复 | 属 PRD 必填清单项，作交叉核对可接受 | 轻微冗余 |
+| 1 | 🟡 Warning | Logic (rule 3: data/number inconsistency) | line 56 vs line 84 | Conflicting deletion deadline: NFR says data is thoroughly deleted "账号注销后 30 天内" (within 30 days), Edge Cases say it is physically deleted only "30 天后" (after 30 days) with recovery possible during the window | Align the two — e.g., NFR: "注销后 30 天内可申诉恢复，期满后彻底删除" | A deletion job scheduled from the NFR row fires before the promised recovery window ends; compliance commitment mismatch |
+| 2 | 🟡 Warning | Logic (rule 8: unimplementable rule) | line 82 | Timeout path lacks parameters: "打卡提交超时" has no timeout threshold, the "重试 3 次" has no retry interval/backoff, and the promised "稍后自动同步" has no trigger condition (next launch? network recovery?) | Specify: timeout threshold (e.g., 10 s), retry backoff, and the auto-sync trigger (e.g., "网络恢复后或下次启动时自动同步") | Implementers must invent the trigger values; staged-record treatment (streak/dashboard display while unsynced) stays ambiguous |
+| 3 | 🟢 Suggestion | Logic (rule 8: unimplementable rule) | line 123 | "支持桌面端仅浏览" (desktop view-only support) is claimed in 5W1H-Where but appears in no FR, neither In-Scope nor Out-of-Scope (§6), and no release (§12) | Track it explicitly (add to Scope + assign a release + one acceptance line) or delete the clause | Scope section and 5W1H disagree on product channels; planning from §6 alone would miss it |
+| 4 | 🟡 Warning | Sections (rule 4: key terms undefined) | line 116 | North Star metric uses "人均每周有效打卡天数 ≥ 4 天", but "有效打卡" is never defined; the established term elsewhere is "达标打卡" (§5.1, §7) | Define it (presumably "有效打卡 = 达标打卡") or reuse the defined term | Analytics cannot instrument the headline metric unambiguously |
 
 Levels: 🔴 Error (must fix) / 🟡 Warning (should fix) / 🟢 Suggestion (optional)
 
 ## Dimension Scores
 
-| Dimension | Weight | Score | Weighted | Issues | Severe |
-|---|---|---|---|---|---|
-| 1. Logic | 30% | 87 | 26.1 | 9 | 5 (P1) |
-| 2. Scenario completeness | 25% | 93 | 23.2 | 3 | 3 |
-| 3. Sections | 15% | 95 | 14.2 | 1 | 0 |
-| 4. References | 10% | 100 | 10.0 | 0 | 0 |
-| 5. Redundancy | 10% | 97 | 9.7 | 1 | 0 |
-| 6. Format | 10% | 100 | 10.0 | 0 | 0 |
-| **Overall** | 100% | - | **93.3** | **14** | **8** |
+| Dimension | Weight | Score | Weighted | Items (satisfied/applicable) | Issues | Severe |
+|---|---|---|---|---|---|---|
+| 1. Logic | 30% | 77.78 | 23.3 | 7/9 (rules 3, 8 triggered) | 3 instances / 2 rules | 0 (no P0) |
+| 2. Scenario completeness | 25% | 100 | 25.0 | 20/20 | 0 | 0 |
+| 3. Sections | 15% | 83.33 | 12.5 | 5/6 (rule 4 triggered) | 1 | 0 |
+| 4. References | 10% | 100 | 10.0 | 1/1 (rules 1-7 N/A: no links/images/anchors; rule 8 satisfied) | 0 | 0 |
+| 5. Redundancy | 10% | 100 | 10.0 | 14/14 (rules 4, 5 N/A: no examples, no emoji) | 0 | 0 |
+| 6. Format | 10% | 100 | 10.0 | 2/2 (rules 3, 4 N/A: no ordered lists, no links) | 0 | 0 |
+| **Overall** | 100% | - | **90.8** | - | **4** | **0** |
+
+N/A items are excluded from both numerator and denominator per the count-based rule indexes; a dimension with 0 applicable items would score 100.
 
 ## Top 5 Issues
 
-1. 幂等键表述（"同一分钟"）与唯一索引（日期+用户ID）不一致，同日第二次提交行为未定义。
-2. 补卡达成后对连续天数的重算规则未定义，连击显示可能失真。
-3. FR-5 好友排名缺少好友关系数据表支撑。
-4. 未设目标用户的首次打卡流程未定义。
-5. 产后用户故事（身体不适可降强度）与"已打卡未达标即连击归零"规则直接冲突。
+1. [Warning] The 30-day data-deletion deadline is stated inconsistently — "deleted within 30 days" (NFR, line 56) vs "physically deleted after 30 days" (Edge Cases, line 84).
+2. [Warning] The submission-timeout recovery path (line 82) lacks its timeout threshold and the trigger for the promised "稍后自动同步" behavior.
+3. [Warning] The North Star metric "有效打卡" (line 116) is never defined; the document's established term is "达标打卡".
+4. [Suggestion] The "desktop view-only" capability (line 123) is untracked in Scope, Requirements, and Release Plan.
 
 ## Detailed Issue List
 
-**Issue 1 — 幂等键粒度与表述不一致（P1）**：§8 说"同一分钟内的重复打卡请求返回原记录（幂等键=日期+用户ID）"，但 `daily_checkin(user_id, date)` 唯一索引的粒度是整日。同一打卡日跨分钟第二次提交（早上快走+晚间跑步）是被拒绝还是覆盖？实现者若按分钟去重会与唯一索引冲突。
+**Issue 1 — Conflicting data-deletion deadline** 🟡 | Logic (rule 3: data/number inconsistency) | line 56 vs line 84
+- Evidence: line 56 (§5.2 NFR 安全): "账号注销后 30 天内彻底删除数据"; line 84 (§8 边界与异常): "账号注销：注销后立即停用账号；30 天内可申诉恢复，30 天后数据物理删除。"
+- Description: The same parameter (post-cancellation deletion deadline) has different values: the NFR commits to thorough deletion within 30 days, while the edge-case flow keeps data restorable during the 30-day window and physically deletes only after day 30. "内" (within) and "后" (after) cannot both hold.
+- Fix: Reword the NFR row to "账号注销后 30 天内可申诉恢复，期满后彻底删除数据" (or move deletion to exactly day 30 in the edge case).
+- Impact: Low. A scheduled deletion job built from the NFR row would destroy data inside the promised recovery window; the two statements also disagree as compliance commitments.
 
-**Issue 2 — 补卡对连续天数的影响未定义（P1）**：补卡使历史某日重新判定为"达标"，但连续天数规则（L45）是增量式（"达标日连续天数 +1"）。补了昨天的卡，今天连击应显示 2 还是 1？未说明。
+**Issue 2 — Timeout/auto-sync path under-specified** 🟡 | Logic (rule 8: unimplementable rule) | line 82
+- Evidence: line 82 (§8): "服务器超时：打卡提交超时 → 本地暂存并重试 3 次，重试仍失败则提示'稍后自动同步'。"
+- Description: The mechanism is deliberately detailed (staging, retry count 3, user message) but lacks a judgment standard at its edges: no timeout duration defines when "超时" fires, no retry interval/backoff is given, and the promised "稍后自动同步" (auto-sync later) has no trigger condition (network recovery? next launch?). The rule-file timeout check requires timeout duration, retry count, and backoff strategy — only the retry count is present.
+- Fix: Add the missing parameters, e.g., "超时 10 秒 → 本地暂存，按 5s/15s/60s 重试 3 次，仍失败则提示'稍后自动同步'（网络恢复或下次启动时自动同步，同步成功后刷新看板）".
+- Impact: Low. Implementers must invent the trigger values; the behavior of staged-but-unsynced records (does the record show in "今日" view, does the streak update locally) also remains open.
 
-**Issue 3 — 好友关系数据表缺失（P1）**：FR-5 好友排名需要好友关系存储，但 §11 只有 `friend_visibility`（可见性开关），没有好友关系表。
+**Issue 3 — Untracked "desktop view-only" capability** 🟢 | Logic (rule 8: unimplementable rule) | line 123
+- Evidence: line 123 (§14 Where): "手机 App（iOS/Android），支持桌面端仅浏览。"
+- Description: A product-channel capability is claimed in the 5W1H answer but exists nowhere else: not in In-Scope/Out-of-Scope (§6), not in the FR list (§4), not in any release (§12), with no acceptance criterion (§7). As stated it has no implementable definition (what platform/mechanism, what content, which release).
+- Fix: Either track it (add to Scope, assign a release, add one acceptance line) or delete the clause from the Where answer.
+- Impact: Low. A plan built from §6 alone would omit it; a plan built from §14 would include an unspecified feature.
 
-**Issue 4 — 未设目标时首次打卡未定义（P1）**：达标判定依赖目标，但新用户尚无目标时能否提交打卡、如何判定，未定义。
-
-**Issue 5 — 产后用户故事与严格连击规则冲突（P1）**：用户故事承诺身体不适时可降强度而不被迫达标，但"已打卡未达标日连续天数归零"惩罚低强度日，与"温和计划"画像相悖。
-
-**Issue 6 — 注销数据保留口径含糊（P2）**："30 天内彻底删除"与"30 天内可申诉恢复"张力（申诉期需保留数据）。
-
-**Issue 7 — FR-7 模板与 v1.0 依赖未说明（P2）**：打卡流程默认有模板可选，但 12 套模板 v1.1 才发布。
-
-**Issue 8 — 周完成率周界未定义（P2）**："本周"未定义（周一到周日 vs 滚动 7 天）；周中改目标使当周分母可变。
-
-**Issue 9 — 文档版本号与发布版本号同名（P2）**：文档 v1.2、发布 v1.2、privacy-v1.2 三处同名指代不同对象。
-
-**Issue 10-12 — 场景清单缺口（P1）**：见 Missing #1-#3。
-
-**Issue 13 — 缩写未展开（P2）**：DAU、P95 首用未展开；TLS、CSV 亦未注明全称。
-
-**Issue 14 — 5W1H 与前文重复（P2）**：§14 复述 §1-§3 的背景数据与画像；属 PRD 必填清单项，可接受。
+**Issue 4 — North Star metric term undefined** 🟡 | Sections (rule 4: key terms undefined) | line 116
+- Evidence: line 116 (§13): "北极星指标：人均每周有效打卡天数 ≥ 4 天。"
+- Description: "有效打卡" (valid check-in) appears only here and is never defined. The document's established, precisely defined term is "达标打卡" (§5.1 达标判定; §7 FR-3). If the two are the same concept, the naming is inconsistent; if not, the difference is unspecified — either way the headline metric cannot be unambiguously instrumented.
+- Fix: Define at first use, e.g., "有效打卡（即达标打卡）", or reuse "达标打卡天数".
+- Impact: Low. Data/analytics would have to guess what counts toward the North Star.
 
 ## Fix Priority
 
-**P0（阻断，必须修复）**：无。
-
-**P1（强烈建议）**：#1 幂等键口径、#2 补卡-连击重算、#3 好友关系表、#4 无目标首次打卡、#5 产后故事与连击规则冲突（对应场景缺口 #1-#3）。
-
-**P2（可选）**：#6 注销口径、#7 v1.0 模板、#8 周界口径、#9 版本号命名、#13 缩写展开、#14 5W1H 冗余。
+**P0 (bug-level / scenario gaps, must fix)**: none.
+**P1 (strongly recommended)**: Issue 1 (unify the deletion deadline), Issue 2 (specify timeout threshold, retry backoff, auto-sync trigger), Issue 4 (define "有效打卡").
+**P2 (optional)**: Issue 3 (track or drop the desktop view-only clause).
 
 ## Highlights
 
-- 需求清单（FR-1~FR-8）编号、优先级、依赖关系齐全，依赖声明在同类 PRD 中少见且到位。
-- 验收标准全部量化，且与功能描述、测试用例三处数值互相印证（时长 1-180、补卡 3 次/月、12 套模板、周目标 1-7 天）。
-- 边界与异常覆盖时区、超时重试、幂等、注销恢复，属于高质量 PRD 才有的内容。
-- 数据需求给出表结构、唯一索引与数据量预估，为开发提供了明确输入。
+- Count-based discipline is excellent: every FR has an ID, priority, and individually testable acceptance criteria with concrete values (1-180 min, 3 make-ups/month, 7-day window, 1-7 days/week, P95 ≤ 500 ms, 99.9% availability, iOS 15+/Android 10+).
+- Edge-case coverage goes beyond the usual: timezone-boundary semantics, duplicate submission with an explicit idempotency key matching the declared unique index, retry-with-staging, and account-deletion recovery window.
+- Cross-section consistency is mostly airtight — the weekly completion-rate formula is textually identical in §5.1 and §7, the make-up quota (3/month) is consistent across user story, FR-6, §5.1, §7, and TC-3, and every FR cross-reference resolves.
+- All market/statistical claims in §1 carry named sources, and 5W1H is answered with concrete values rather than platitudes.
+
+## Auto-Fix Summary (--format fix)
+
+Not applicable — review ran with the default full format; no auto-fixes were applied and no files were modified.
 
 ---
 
-**关于 `--output report.md`**：本次运行未写入 `report.md` 文件，完整报告已在上方输出。solo 模式始终以 stdout 交付完整报告，文件写入失败不影响审查结论。
-
 MD-REVIEW-SUMMARY
-File: clean-prd.md | P0 bugs: 0 | Scenario gaps: 3 | Fixable: 14 | Generated: 2026-08-09 15:29 UTC
+File: evals/docs/clean-prd.md | P0 bugs: 0 | Scenario gaps: 0 | Fixable: 4 | Generated: 2026-09-05 20:07

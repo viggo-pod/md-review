@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `brd`. Checks whether the business requir
 ## Key Focus
 Business value + cost estimation + return on investment
 
-## Required Content (deduct if missing)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Business Background
 - [ ] **Business Goals**: Are the business goals the project must achieve clear (revenue/market share/cost/growth)?
@@ -49,16 +49,3 @@ Business value + cost estimation + return on investment
 - No value argument (cannot explain why it's worth doing)
 - Risks not identified
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Missing business goals | -15 |
-| Missing problem statement | -10 |
-| Missing business value/ROI | -12 |
-| Scope not defined | -10 |
-| Requirements list missing/un-numbered | -15 |
-| Missing success metrics | -10 |
-| Missing cost/revenue model | -12 |
-| Missing risk analysis | -10 |
-| 5W1H missing 2 or more items | -10 |
-| Business goals not quantifiable | -8 |

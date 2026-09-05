@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `gdd`. Checks whether the game design doc
 Game overview + core gameplay + system mechanics + narrative and world-building
 - Includes: **Core Mechanics List**, **Game Systems List**
 
-## Required Content (deduct if missing)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Core Design
 - [ ] **Core Gameplay Loop**: Is the player's core loop from start to finish clear (e.g., collect → craft → combat → upgrade → collect)?
@@ -21,13 +21,13 @@ Game overview + core gameplay + system mechanics + narrative and world-building
 
 ### Systems and Mechanics
 - [ ] **Core Mechanics**: Are the main gameplay mechanics defined in detail (operation methods, rules, feedback)?
-- [ ] **Numerical Design**: Do key values (health/damage/speed/probability) have definitions and balancing rationale?
+- [ ] **Numerical Design**: Do key values (health/damage/speed/probability) have definitions and balancing rationale? (counted per occurrence — each undefined key-value category is one unmet item)
 - [ ] **Formulas**: Are numerical formulas complete (variable definitions, value ranges, example calculations)?
-- [ ] **Edge Cases**: Are the boundary conditions of every mechanism described, at minimum:
-  - **Death / Respawn / Failure determination**: how HP is deducted, when failure is decided, what state the player respawns into, and whether respawning depends on rules defined elsewhere (an undeclared death rule underneath a respawn/continue feature is a bug source)
-  - **Fail / retry / replay behavior** for quests, levels and minigames
-  - **Extreme values**: max/min caps, overflow/underflow, zero-input handling in formulas
-  - **Concurrent state conflicts**: save/load, offline income, shared world state
+- [ ] **Edge Cases** — the boundary conditions of every mechanism must be described, at minimum:
+  - [ ] **Death / Respawn / Failure determination**: how HP is deducted, when failure is decided, what state the player respawns into, and whether respawning depends on rules defined elsewhere (an undeclared death rule underneath a respawn/continue feature is a bug source)
+  - [ ] **Fail / retry / replay behavior** for quests, levels and minigames
+  - [ ] **Extreme values**: max/min caps, overflow/underflow, zero-input handling in formulas
+  - [ ] **Concurrent state conflicts**: save/load, offline income, shared world state
 - [ ] **Inter-system Dependencies**: Is the dependency of system A on system B declared bidirectionally?
 
 ### Content Scope
@@ -55,17 +55,3 @@ Game overview + core gameplay + system mechanics + narrative and world-building
 - Incomplete markers (TODO/TBD)
 - Mechanics referenced but their boundary behavior undefined (e.g., a respawn/continue feature with no stated death or failure rules)
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Missing core gameplay loop | -15 |
-| Missing player fantasy | -10 |
-| Key values not defined | -5 per occurrence |
-| Missing/incomplete formulas | -10 |
-| Missing test cases | -10 |
-| Missing acceptance criteria | -10 |
-| Incomplete quest/content lists | -5 |
-| Edge cases not handled | -3 per occurrence |
-| Death/respawn/failure rules missing or under-defined | -5 per occurrence |
-| One-way system dependency | -5 |
-| Obvious numerical imbalance | -8 |

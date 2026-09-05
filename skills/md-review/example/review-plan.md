@@ -23,7 +23,7 @@ Fill in this template during Phase 0 and present it for approval (interactive mo
 
 ### 3. Risk Warnings
 
-- This review never modifies the original document; it only produces a report
+- This review never modifies the original document; it only produces a report (read-only until the user approves a fix plan; approved edits and solo-mode mechanical fixes are the only exceptions, per SKILL.md)
 - Documents over 500 lines are reviewed in segments (each ≤300 lines); cross-segment issues may be missed
 - External link checks depend on network access and may false-positive
 

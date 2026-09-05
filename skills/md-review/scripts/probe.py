@@ -32,7 +32,21 @@ def probe(md_path):
     print(f"Lines: {len(lines)} | Words: {len(text.split())} | Est. tokens: ~{tokens}")
     print()
     print("--- Heading outline (first 20) ---")
-    heads = [(i + 1, l) for i, l in enumerate(lines) if l.startswith("#")]
+    # Fence-aware scan: lines inside ```/~~~ blocks are content, not headings
+    heads = []
+    in_fence = False
+    fence_char, fence_len = "", 0
+    for i, l in enumerate(lines):
+        m = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", l)
+        if m:
+            marker, info = m.group(1), m.group(2).strip()
+            if not in_fence:
+                in_fence, fence_char, fence_len = True, marker[0], len(marker)
+            elif marker[0] == fence_char and len(marker) >= fence_len and not info:
+                in_fence = False
+            continue
+        if not in_fence and re.match(r"^ {0,3}#{1,6}(\s|$)", l):
+            heads.append((i + 1, l))
     for num, h in heads[:20]:
         print(f"  L{num}: {h}")
     if len(heads) > 20:

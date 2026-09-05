@@ -7,6 +7,9 @@ This dimension carries 30% weight and is the core of md-review. **Prioritize fin
 Mark all of the following as 🔴 Error, because they can break the implementation code:
 
 ### Formula and Calculation Errors
+
+**Applicability**: apply these checks only when the document actually contains formulas or calculations; if no such construct exists, mark every check in this section **N/A** — an N/A check must not produce a finding.
+
 - [ ] Are all variables in formulas defined? (undefined variables = the implementer cannot code)
 - [ ] Are formula units consistent? (e.g., mixing seconds vs. milliseconds)
 - [ ] Is the evaluation order unambiguous? (missing parentheses)
@@ -22,6 +25,9 @@ Mark all of the following as 🔴 Error, because they can break the implementati
 - [ ] Version numbers / dependency versions inconsistent across locations
 
 ### Missing Edge Conditions (bug hotbed)
+
+**Applicability**: timeout, concurrency, and data-volume checks apply only when the document describes corresponding mechanisms, interfaces, or data flows; if the construct is absent, mark the check **N/A** — an N/A check must not produce a finding.
+
 - [ ] Are null/None/empty lists handled?
 - [ ] Are zero/negative/over-limit inputs handled?
 - [ ] Are timeouts explicitly defined? (timeout duration, retry count, backoff strategy)
@@ -148,16 +154,19 @@ Mark all of the following as 🔴 Error, because they can break the implementati
 - [ ] Does the document content conflict with declared conventions or standards referenced in the document set (e.g., style guides, interface contracts, process rules)?
 - [ ] Does the described practice match previously established decisions in the reviewed documents?
 
-## Scoring Guide
+## Rule Index (count-based)
 
-| Finding | Deduction |
+Each rule below is one countable item and applies to every document: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. The absence of required content (e.g., a missing overview or conclusion) is itself a finding — never an N/A. N/A is reserved for items that genuinely cannot apply to the document and must be justified in the report. Dimension score = (rules with no finding) ÷ (total rules) × 100.
+
+| # | Rule |
 |---|---|
-| Self-contradictory statements | -3 |
-| Terminology inconsistency | -1 per occurrence |
-| Data/number inconsistency | -2 per occurrence |
-| Logical fallacy | -2 each |
-| Unsourced assertion | -1 each |
-| Unconsidered rebuttal | -1 |
-| Vague statement (multiple interpretations) | -0.5 per occurrence |
-| Unimplementable rule (no judgment standard or boundary) | -3 per occurrence |
-| Sensitive information disclosure (real secret / credential / internal address) | -8 each (P0) |
+| 1 | Self-contradictory statements |
+| 2 | Terminology inconsistency |
+| 3 | Data/number inconsistency |
+| 4 | Logical fallacy |
+| 5 | Unsourced assertion |
+| 6 | Unconsidered rebuttal |
+| 7 | Vague statement (multiple interpretations) |
+| 8 | Unimplementable rule (no judgment standard or boundary) |
+| 9 | Sensitive information disclosure — real secret/credential/internal address (P0) |
+

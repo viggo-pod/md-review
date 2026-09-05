@@ -1,7 +1,7 @@
 ---
 name: md-review
 description: 'Review Markdown documents with scenario-aware weighted scoring, prioritizing bug and logic-error detection over style. Use this skill whenever the user asks to review, audit, check, or grade any Markdown document — review this doc, check the markdown for bugs, find logic errors, verify references, detect redundancy, check formatting, score or grade a document, review a PRD/ADR/API spec/GDD/FSD/MRD/BRD/task list/test case/level design/technical design/concept document, audit documentation, or run a document quality gate before release.'
-argument-hint: '[path] [scenario: prd|adr|add|api|brd|mrd|fsd|gdd|gdo|tdd|ldd|concept|tld|tcd] [--dimensions 1-6] [--format full|summary|fix] [--solo] [--pass-threshold N] [--output file] [json]'
+argument-hint: '[path] [scenario: prd|adr|add|api|brd|mrd|fsd|gdd|gdo|tdd|ldd|concept|tld|tcd] [--dimensions 1,2,3,4,5,6] [--format full|summary|fix] [--solo] [--pass-threshold N] [--output file] [json]'
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, Edit, Bash, SearchExtraTools
 model: sonnet
@@ -50,7 +50,7 @@ The scenario is optional. Without one, the review runs in generic mode (the scen
 | 5. | Redundancy | 10% | duplicated content, low-value information (generic) |
 | 6. | Format | 10% | rendering-critical formatting (detailed linting is the editor's job) |
 
-**Overall score = Σ(dimension score × weight)**. Dimensions that don't apply to the document are scored 100.
+**Overall score = Σ(dimension score × weight)**, where each **dimension score = (applicable items satisfied ÷ applicable items total) × 100**. Items are the checklist entries of the dimension's rule file or scenario checklist; per-unit items (counted per endpoint/feature/view) expand the denominator accordingly, and N/A items are excluded from both numerator and denominator. A dimension with 0 applicable items (including the scenario dimension in generic mode) is scored 100.
 
 ## Usage
 
@@ -93,7 +93,7 @@ Non-interactive, for CI pipelines and headless invocation. Skips all approval ga
 
 - Phase 0 runs metadata probing only — no plan is printed and no approval is requested
 - `--format fix` applies only safe mechanical fixes automatically (link-text repairs, filler-word replacements, echo-title removals, trailing newlines); anything requiring judgment is reported as unfixed
-- Writes the full report to stdout; `--output <file>` also saves it
+- Writes the report selected by `--format` to stdout (`summary` emits only the score table plus the handoff block); `--output <file>` also saves it
 - Always ends with the machine-readable `MD-REVIEW-SUMMARY` block so CI can parse the result
 - Exit codes: `0` = review completed with no P0 (blocking) issues and overall score ≥ `--pass-threshold`; `1` = review completed but P0 issues exist or the score is below the threshold; `2` = error (missing file, invalid arguments)
 
@@ -142,7 +142,7 @@ Rules: @./references/logic-rules.md
 
 #### 2. Scenario completeness (25%, scenario-specific)
 
-Load the checklist for the scenario and verify every required item, both presence and quality. Each checklist contains "Core Questions" (what editors must address) and "Key Focus". Required content per scenario:
+Load the checklist for the scenario and verify every required item, both presence and quality. Every required item is a countable item: missing or under-specified = 1 unmet item in the scenario-completeness ratio. Each checklist contains "Core Questions" (what editors must address) and "Key Focus". Required content per scenario:
 
 **Report every checklist item individually.** An item that is absent or under-specified must appear as its own entry in the Missing Scenario Content section — do not merge several thin items into one row (e.g. folding an incomplete Physical View into "scalability content") just because the document also has larger P0 defects. Placeholder markers in the source ("no further details", "TBD", "to be defined", "lorem ipsum") count as under-specified.
 
@@ -191,7 +191,7 @@ Rules: @./references/format-rules.md
 
 #### Weighted scoring (100-point scale)
 
-**Overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — compute it with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]` (validates 0-100 and outputs grade + risk; `--p0` is the P0 issue count)
+**Overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — each dimension score is the count ratio from its checklist or rule index (see "Overall score" definition above). Compute the weighted overall with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]` (validates 0-100 and outputs grade + risk; `--p0` is the P0 issue count); `--items PRESENT:APPLICABLE` converts one dimension's item counts to its 0-100 score. In generic mode, pass `100` for the non-applicable scenario-completeness dimension — this contributes a fixed 25 points (0.25 × 100) to the overall score; the report templates keep that row visible with score 100.
 
 | Overall | Grade | Action |
 |---|---|---|
@@ -200,7 +200,7 @@ Rules: @./references/format-rules.md
 | 60-74 | Passing | Must fix P0 (bug-level) before re-review |
 | < 60 | Failing | Rewrite or restructure recommended |
 
-**Risk level**: Low (≥80 and no P0) / Medium (60-79 or few P0) / High (40-59 or multiple P0) / Critical (<40 or a blocking bug)
+**Risk level**: Low (≥80 and no P0) / Medium (60-79, or ≥80 with any P0) / High (40-59) / Critical (<40) — matching `risk_level` in `scripts/score.py`
 
 #### Report template
 
@@ -251,7 +251,7 @@ Only after approval, edit with Edit/Write. Mechanical fixes safe to auto-apply w
 - **Path validation (run `scripts/validate_path.py <path>` first)**: rejects directories, a missing file, a non-`*.md` extension, and binary/undecodable content — all with a clear stderr message and exit `2`
 - Missing file / binary file / non-UTF-8 encoding: the helper scripts (`probe.py` / `analyze_structure.py` / `extract_refs.py`) also handle these themselves: missing or binary (NUL-containing) input → clear stderr message and exit `2`; non-UTF-8 text that decodes as latin-1 is processed normally
 - `extract_refs.py` failure: fall back to manual link checking
-- Invalid scenario value (not in the 14 scenarios): list the valid values and review as generic
+- Invalid scenario value (not in the 14 scenarios): list the valid values and exit with code 2
 
 Solo-mode exit codes (CI gate): `0` = no P0 and score ≥ `--pass-threshold`; `1` = P0 issues exist or score below threshold; `2` = error (missing file, invalid arguments, undecodable input).
 
@@ -286,7 +286,7 @@ Solo-mode exit codes (CI gate): `0` = no P0 and score ≥ `--pass-threshold`; `1
 - `scripts/probe.py` — metadata probe: lines / words / est. tokens / heading outline / preview (Phase 0)
 - `scripts/analyze_structure.py` — structural analysis: heading levels, code-block languages, tables/links/images, TODO/FIXME, heading skips (Phase 1)
 - `scripts/extract_refs.py` — extract and classify reference links (target existence is verified manually, used in dimension 4)
-- `scripts/score.py` — weighted scoring: overall score, grade, risk, 0-100 validation (Phase 4)
+- `scripts/score.py` — weighted scoring: overall score, grade, risk, 0-100 validation; `--items P:A` converts one dimension's item counts to its 0-100 score (Phase 4)
 
 ## Templates
 
