@@ -1,7 +1,7 @@
 ---
 name: md-review
 description: 'Review Markdown documents with scenario-aware weighted scoring, prioritizing bug and logic-error detection over style. Use this skill whenever the user asks to review, audit, check, or grade any Markdown document — review this doc, check the markdown for bugs, find logic errors, verify references, detect redundancy, check formatting, score or grade a document, review a PRD/ADR/API spec/GDD/FSD/MRD/BRD/task list/test case/level design/technical design/concept document, audit documentation, or run a document quality gate before release.'
-argument-hint: '[path] [scenario: prd|adr|add|api|brd|mrd|fsd|gdd|gdo|tdd|ldd|concept|tld|tcd] [--dimensions 1-6] [--format full|summary|fix] [--solo] [--pass-threshold N] [--output file] [json]'
+argument-hint: '[path] [scenario: prd|adr|add|api|brd|mrd|fsd|gdd|gdo|tdd|ldd|concept|tld|tcd] [--dimensions 1,2,3,4,5,6] [--format full|summary|fix] [--solo] [--pass-threshold N] [--output file] [json]'
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, Edit, Bash, SearchExtraTools
 model: sonnet
@@ -93,7 +93,7 @@ Non-interactive, for CI pipelines and headless invocation. Skips all approval ga
 
 - Phase 0 runs metadata probing only — no plan is printed and no approval is requested
 - `--format fix` applies only safe mechanical fixes automatically (link-text repairs, filler-word replacements, echo-title removals, trailing newlines); anything requiring judgment is reported as unfixed
-- Writes the full report to stdout; `--output <file>` also saves it
+- Writes the report selected by `--format` to stdout (`summary` emits only the score table plus the handoff block); `--output <file>` also saves it
 - Always ends with the machine-readable `MD-REVIEW-SUMMARY` block so CI can parse the result
 - Exit codes: `0` = review completed with no P0 (blocking) issues and overall score ≥ `--pass-threshold`; `1` = review completed but P0 issues exist or the score is below the threshold; `2` = error (missing file, invalid arguments)
 
@@ -191,7 +191,7 @@ Rules: @./references/format-rules.md
 
 #### Weighted scoring (100-point scale)
 
-**Overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — compute it with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]` (validates 0-100 and outputs grade + risk; `--p0` is the P0 issue count)
+**Overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — compute it with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]` (validates 0-100 and outputs grade + risk; `--p0` is the P0 issue count). In generic mode, pass `100` for the non-applicable scenario-completeness dimension — its weight still applies, so the weighted overall equals a renormalized five-dimension sum; the report templates keep that row visible with score 100.
 
 | Overall | Grade | Action |
 |---|---|---|
@@ -200,7 +200,7 @@ Rules: @./references/format-rules.md
 | 60-74 | Passing | Must fix P0 (bug-level) before re-review |
 | < 60 | Failing | Rewrite or restructure recommended |
 
-**Risk level**: Low (≥80 and no P0) / Medium (60-79 or few P0) / High (40-59 or multiple P0) / Critical (<40 or a blocking bug)
+**Risk level**: Low (≥80 and no P0) / Medium (60-79, or ≥80 with any P0) / High (40-59) / Critical (<40) — matching `risk_level` in `scripts/score.py`
 
 #### Report template
 
@@ -251,7 +251,7 @@ Only after approval, edit with Edit/Write. Mechanical fixes safe to auto-apply w
 - **Path validation (run `scripts/validate_path.py <path>` first)**: rejects directories, a missing file, a non-`*.md` extension, and binary/undecodable content — all with a clear stderr message and exit `2`
 - Missing file / binary file / non-UTF-8 encoding: the helper scripts (`probe.py` / `analyze_structure.py` / `extract_refs.py`) also handle these themselves: missing or binary (NUL-containing) input → clear stderr message and exit `2`; non-UTF-8 text that decodes as latin-1 is processed normally
 - `extract_refs.py` failure: fall back to manual link checking
-- Invalid scenario value (not in the 14 scenarios): list the valid values and review as generic
+- Invalid scenario value (not in the 14 scenarios): list the valid values and exit with code 2
 
 Solo-mode exit codes (CI gate): `0` = no P0 and score ≥ `--pass-threshold`; `1` = P0 issues exist or score below threshold; `2` = error (missing file, invalid arguments, undecodable input).
 

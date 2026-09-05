@@ -59,4 +59,5 @@ Game idea + market analysis + target audience + core selling points
 | Missing core selling points | -10 |
 | Missing risks and assumptions | -12 |
 | Missing value argument | -10 |
+| Missing kill criteria (when to abandon the concept) | -5 |
 | 5W1H missing 2 or more items | -10 |

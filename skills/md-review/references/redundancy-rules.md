@@ -55,7 +55,7 @@ Flag these weakening qualifiers:
 - Every chapter and section repeating the same context → explain once, in one place
 
 ### Repeated Examples
-- 3 examples with 95% identical commands, differing only in parameters → merge into one example with a comment
+- 3 examples with ≥95% identical commands (boundary included), differing only in parameters → merge into one example with a comment
   ```markdown
   # ❌ Redundant
   az storage account create -n myaccount1 -g mygroup -l eastus
@@ -165,7 +165,7 @@ Readers have limited working memory and attention; documents that bury the actio
 | Filler words (in order to, etc.) | -0.5 per occurrence |
 | Unnecessary hedges | -0.5 each |
 | Echo headings | -1 per occurrence |
-| Repeated examples (>90% identical) | -1.5 per group |
+| Repeated examples (≥95% identical, same threshold as detection) | -1.5 per group |
 | Decorative emoji (more than 3) | -0.5 each |
 | Redundant lead-in paragraphs | -1 per occurrence |
 | Mergable similar sections | -2 |

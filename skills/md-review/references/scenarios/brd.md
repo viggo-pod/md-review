@@ -57,6 +57,7 @@ Business value + cost estimation + return on investment
 | Missing business value/ROI | -12 |
 | Scope not defined | -10 |
 | Requirements list missing/un-numbered | -15 |
+| Requirements without priority | -5 |
 | Missing success metrics | -10 |
 | Missing cost/revenue model | -12 |
 | Missing risk analysis | -10 |

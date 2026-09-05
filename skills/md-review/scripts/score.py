@@ -56,8 +56,11 @@ if __name__ == "__main__":
         except (IndexError, ValueError):
             print("Error: --p0 requires an integer argument", file=sys.stderr)
             sys.exit(2)
+        if p0 < 0:
+            print("Error: --p0 must be >= 0", file=sys.stderr)
+            sys.exit(2)
         del args[i:i + 2]
-    if len(args) < 6:
+    if len(args) != 6:
         print("Usage: python3 score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]")
         sys.exit(1)
     try:

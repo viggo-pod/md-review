@@ -30,11 +30,26 @@ def analyze(md_path):
     print(f"=== Structural Analysis: {md_path} ===")
     print(f"Lines: {len(lines)} | Words: {len(text.split())} | Est. tokens: ~{len(text) // 4}")
 
-    heads = [(i + 1, l) for i, l in enumerate(lines) if l.startswith("#")]
+    # Fence-aware scan: lines inside ```/~~~ blocks are content, not headings
+    fence_re = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+    heads = []
+    langs = Counter()
+    in_fence = False
+    fence_char, fence_len = "", 0
+    for i, l in enumerate(lines):
+        m = fence_re.match(l)
+        if m:
+            marker, info = m.group(1), m.group(2).strip()
+            if not in_fence:
+                in_fence, fence_char, fence_len = True, marker[0], len(marker)
+                langs[info.split()[0] if info else ""] += 1
+            elif marker[0] == fence_char and len(marker) >= fence_len and not info:
+                in_fence = False
+            continue
+        if not in_fence and l.startswith("#"):
+            heads.append((i + 1, l))
     levels = Counter(len(re.match(r"^(#+)", h).group(1)) for _, h in heads)
     print(f"Heading levels: {dict(sorted(levels.items()))} | Total headings: {len(heads)}")
-
-    langs = Counter(re.findall(r"^```(\w*)", text, re.M))
     print(f"Code-block languages: {dict(langs) if langs else 'none'}")
 
     tables = sum(1 for l in lines if l.strip().startswith("|"))

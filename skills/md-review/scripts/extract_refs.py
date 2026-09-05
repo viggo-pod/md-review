@@ -26,8 +26,19 @@ def read_text_safe(md_path):
 def extract_refs(md_path):
     content = read_text_safe(md_path)
 
-    # Extract [text](url) links ((?<!!) excludes ![alt](path) image syntax to avoid double counting)
-    links = re.findall(r'(?<!!)\[([^\]]+)\]\(([^)]+)\)', content)
+    # Extract [text](url) links with balanced parentheses in the destination
+    # ((?<!!) excludes ![alt](path) image syntax to avoid double counting)
+    links = []
+    for m in re.finditer(r'(?<!!)\[([^\]]+)\]\(', content):
+        start, depth, i = m.end(), 1, m.end()
+        while i < len(content) and depth:
+            if content[i] == '(':
+                depth += 1
+            elif content[i] == ')':
+                depth -= 1
+            i += 1
+        if depth == 0:
+            links.append((m.group(1), content[start:i - 1].strip()))
 
     # Extract ![alt](path) images
     images = re.findall(r'!\[([^\]]*)\]\(([^)]+)\)', content)

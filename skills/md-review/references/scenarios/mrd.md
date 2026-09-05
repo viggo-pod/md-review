@@ -51,6 +51,7 @@ Market analysis + user pain points + core feature highlights
 | Missing competitive analysis | -12 |
 | Missing user persona | -12 |
 | Requirements list missing/un-numbered | -15 |
+| Requirements without priority | -5 |
 | Missing value proposition | -10 |
 | Missing business model | -10 |
 | Missing success metrics | -8 |

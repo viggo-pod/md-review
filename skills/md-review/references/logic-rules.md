@@ -7,6 +7,9 @@ This dimension carries 30% weight and is the core of md-review. **Prioritize fin
 Mark all of the following as 🔴 Error, because they can break the implementation code:
 
 ### Formula and Calculation Errors
+
+**Applicability**: apply these checks only when the document actually contains formulas or calculations; if no such construct exists, mark every check in this section **N/A** — an N/A check must not produce a finding.
+
 - [ ] Are all variables in formulas defined? (undefined variables = the implementer cannot code)
 - [ ] Are formula units consistent? (e.g., mixing seconds vs. milliseconds)
 - [ ] Is the evaluation order unambiguous? (missing parentheses)
@@ -22,6 +25,9 @@ Mark all of the following as 🔴 Error, because they can break the implementati
 - [ ] Version numbers / dependency versions inconsistent across locations
 
 ### Missing Edge Conditions (bug hotbed)
+
+**Applicability**: timeout, concurrency, and data-volume checks apply only when the document describes corresponding mechanisms, interfaces, or data flows; if the construct is absent, mark the check **N/A** — an N/A check must not produce a finding.
+
 - [ ] Are null/None/empty lists handled?
 - [ ] Are zero/negative/over-limit inputs handled?
 - [ ] Are timeouts explicitly defined? (timeout duration, retry count, backoff strategy)

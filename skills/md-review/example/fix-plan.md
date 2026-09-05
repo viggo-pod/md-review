@@ -17,4 +17,4 @@ Present before any modification, and wait for approval (solo mode: mechanical fi
 1. P0 bugs → scenario gaps → P1 → P2; verify readability after each group
 2. Re-review the affected dimensions after fixing; user confirms
 
-Approve this fix plan? (reply y to execute, or tell me what to adjust)
+Interactive mode only: approve this fix plan? (reply y to execute, or tell me what to adjust; solo mode skips this approval entirely)

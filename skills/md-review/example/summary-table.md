@@ -12,4 +12,4 @@ Used in Phase 5 for the single-document review (step 1). Weighted per-dimension 
 | 6. Format | 10% | 95 | 9.5 | 1 | 0 |
 | **Overall** | 100% | - | **79.5** | **18** | **4** |
 
-> Generic mode (no scenario): omit the "2. Scenario completeness" row (the dimension is skipped and scored 100).
+> Generic mode (no scenario): keep the "2. Scenario completeness" row with Score **100** / Weighted **25.0** (the dimension is non-applicable and scored 100, keeping the overall consistent with `score.py`).

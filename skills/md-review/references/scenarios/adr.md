@@ -57,3 +57,4 @@ Decision context + trade-off logic + consequence estimation
 | Title not descriptive | -5 |
 | No number/date | -5 |
 | Conflict with existing ADRs not stated | -10 |
+| Impact scope not marked (affected modules/systems) | -10 |

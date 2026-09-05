@@ -59,6 +59,10 @@ System layering + data flow + deployment topology
 | Missing quality attribute scenarios | -12 |
 | Missing interface definitions | -12 |
 | Data flow not closed-loop | -10 |
+| Missing module list / system layers | -10 |
+| Missing data flow description | -10 |
+| Missing deployment topology | -8 |
+| Missing tech-stack compatibility | -8 |
 | Missing constraints and assumptions | -8 |
 | Missing key decision records | -8 |
 | Missing trade-off analysis | -10 |

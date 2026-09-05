@@ -7,11 +7,11 @@ This dimension carries only 10% of the overall weight. Detailed linting (item-by
 ### Headings
 - Heading-level skips (H1 → H3 skipping H2) — affects document structure comprehension and table-of-contents generation
 - Multiple H1 headings (the document title should be the unique H1)
-- No blank line before/after headings (may be parsed as body text)
+- Missing blank line before a setext heading that directly follows a paragraph (the heading line is parsed as paragraph text). Do NOT flag ATX headings (`#`) without surrounding blank lines — CommonMark does not require them
 
 ### Code Blocks
-- Unclosed fenced code blocks (opening/closing backtick counts differ) — subsequent content may be swallowed into the code block
-- Unclosed inline code (single backtick) — affects rendering
+- Unclosed fenced code blocks — a fence opened with a run of 3+ backticks or 3+ tildes that is never closed; the closing fence must use the same character and be at least as long as the opening fence (a longer closing fence is valid) — subsequent content may be swallowed into the code block
+- Unclosed inline code — a code span opened with a run of one or more backticks that is not closed by an equal-length backtick run — affects rendering
 
 ### Numbered Lists (step-numbering breaks)
 - **Gap in a contiguous ordered list** (1, 2, 4): a step number is skipped — in procedures (test steps, build steps, process flows) this usually means a step was deleted or forgotten; flag it
@@ -21,7 +21,7 @@ This dimension carries only 10% of the overall weight. Detailed linting (item-by
 
 ### Links and Images
 - Incomplete `[text](url)` syntax (missing parentheses)
-- Relative paths not starting with `./` or `../` (likely wrong paths)
+- Relative paths that do not resolve from the current document location (e.g. `README.md` and `docs/guide.md` are valid relative destinations; verify the target exists instead of checking for a `./`/`../` prefix)
 
 ## Scoring Guide (format dimension, out of 100)
 
@@ -32,4 +32,4 @@ This dimension carries only 10% of the overall weight. Detailed linting (item-by
 | Step-numbering break (gap or duplicate) in an ordered list | -3 per occurrence |
 | Incomplete link syntax | -5 per occurrence |
 
-Format dimension floor: as long as a rendering-level error exists (unclosed code block), the format score cannot exceed 60; only minor issues score 80-95.
+Format dimension cap: when a rendering-level error exists (unclosed code block), the format score cannot exceed 60 — this cap applies after the per-finding deductions above; only minor issues score 80-95.

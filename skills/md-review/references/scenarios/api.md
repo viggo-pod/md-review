@@ -66,9 +66,9 @@ Endpoint contracts + data models + error dictionary
 | Endpoint missing request parameter definitions | -5 per endpoint |
 | Endpoint missing response format definitions | -5 per endpoint |
 | Missing error code definitions | -12 |
-| Missing examples | -5 per example |
+| Missing examples | -5 per endpoint without examples |
 | Authentication method not stated | -15 |
 | Missing test cases | -10 |
 | Missing change log | -8 |
 | Inconsistent naming | -5 |
-| Boundary conditions not explained | -3 per occurrence |
+| Boundary conditions not explained | -3 per unexplained boundary condition (counted per boundary condition across all endpoints) |

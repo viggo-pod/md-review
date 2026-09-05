@@ -60,6 +60,7 @@ Input/output definitions + business rules + exception handling (a direct bluepri
 | Missing input/output definitions | -5 per occurrence |
 | Missing exception handling | -8 |
 | Missing boundary conditions | -3 per occurrence |
+| Missing state diagram where state transitions exist | -8 |
 | Missing use cases | -10 |
 | Missing test cases | -10 |
 | Missing acceptance criteria | -10 |
