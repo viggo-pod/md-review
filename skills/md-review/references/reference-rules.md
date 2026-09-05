@@ -78,15 +78,18 @@ This skill reviews one document per invocation; only checks executable on that s
 - [ ] Are the referenced interfaces/modules defined in the document?
 - [ ] Are the referenced config files/environment variables documented?
 
-## Scoring Guide
+## Rule Index (count-based)
 
-| Finding | Deduction |
+Each rule below is one countable item: triggered at least once = 1 unmet item, and the occurrence count is reported in the findings as severity. A rule whose construct is absent from the document is N/A and is excluded from both numerator and denominator. Dimension score = (rules with no finding) ÷ (applicable rules) × 100.
+
+| # | Rule |
 |---|---|
-| Link points to a nonexistent file | -2 each |
-| Anchor doesn't exist in the target file | -1 each |
-| Image file doesn't exist | -2 each |
-| Placeholder link | -1 each |
-| "Click here"-style link text | -1 each |
-| Link text mismatches URL | -1 each |
-| Link inside a heading | -0.5 each |
-| Broken cross-reference | -2 each |
+| 1 | Link points to a nonexistent file |
+| 2 | Anchor doesn't exist in the target file |
+| 3 | Image file doesn't exist |
+| 4 | Placeholder link |
+| 5 | "Click here"-style non-descriptive link text |
+| 6 | Link text mismatches URL |
+| 7 | Link inside a heading |
+| 8 | Broken cross-reference |
+

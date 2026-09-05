@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `tdd`. Checks whether the technical desig
 ## Key Focus
 System architecture + technology stack + coding standards + performance requirements
 
-## Required Content (deduct if missing)
+## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
 
 ### Technical Specification Translation
 - [ ] **Requirements Mapping**: Are the design document's functional requirements mapped to concrete technical implementations?
@@ -52,15 +52,3 @@ System architecture + technology stack + coding standards + performance requirem
 - Technology selection without rationale ("use X" without comparison)
 - Performance goals not quantified
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Requirements not mapped to technical implementation | -15 |
-| Missing overall architecture | -15 |
-| Missing interface definitions | -12 |
-| Technology selection without rationale | -12 |
-| Missing coding conventions | -8 |
-| Performance goals not quantified | -12 |
-| Missing testing strategy | -10 |
-| Technology stack compatibility not assessed | -8 |
-| Module dependencies unclear | -8 |

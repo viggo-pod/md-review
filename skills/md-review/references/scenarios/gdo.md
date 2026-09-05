@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `gdo`. Checks whether the game overview d
 ## Key Focus
 Executive summary + core concept + target audience + key features
 
-## Required Content (deduct if missing)
+## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
 
 ### Core Overview
 - [ ] **Executive Summary**: Is what the game is and why it's worth making clearly explained within one page?
@@ -42,15 +42,3 @@ Executive summary + core concept + target audience + key features
 - Design pillars and USP confused (they are different: pillars are design principles, USP is a market selling point)
 - No competitor reference (unable to judge uniqueness)
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Missing executive summary | -15 |
-| Core concept unclear | -15 |
-| Missing design pillars | -12 |
-| Missing unique selling point (USP) | -12 |
-| Missing target audience | -10 |
-| Missing target platforms | -8 |
-| Missing key feature list | -10 |
-| 5W1H missing 2 or more items | -10 |
-| Core concept verbose (>2 pages) | -8 |

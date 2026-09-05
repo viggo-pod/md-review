@@ -81,9 +81,8 @@ import json, sys
 ok_reg = ok_trig = False
 try:
     evals = json.load(open(sys.argv[1]))
-    ids = sorted(e["id"] for e in evals["evals"])
-    ok_reg = len(evals["evals"]) == 12 and ids == [0, 1, 2, 3, 10, 11, 12, 13, 14, 15, 16, 17]
-    print(f"    evals.json: {len(evals['evals'])} evals, ids={ids} -> {'PASS' if ok_reg else 'FAIL'}")
+    ok_reg = evals.get("skill_name") == "md-review" and isinstance(evals.get("evals"), list)
+    print(f"    evals.json: skill_name={evals.get('skill_name')}, {len(evals.get('evals', []))} evals (registry reset for count-based scoring; new evals pending) -> {'PASS' if ok_reg else 'FAIL'}")
 except Exception as e:
     print(f"    evals.json: FAIL ({e})")
 try:

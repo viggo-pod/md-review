@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `ldd`. Checks whether the level design do
 Level layout + player paths + challenge configuration + pacing control
 - Includes: **Level List**, **Scene Interaction Elements List**
 
-## Required Content (deduct if missing)
+## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
 
 ### Level Design
 - [ ] **Level List**: Are all levels numbered (L-1, L-2...), with objectives/theme/location?
@@ -48,16 +48,3 @@ Level layout + player paths + challenge configuration + pacing control
 - Challenges and pacing not designed (monotonous levels)
 - No metrics (unable to assess level quality)
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Level list missing | -15 |
-| Level layout not described | -12 |
-| Player path unclear | -12 |
-| Challenge configuration missing | -10 |
-| Pacing control not designed | -10 |
-| Unreasonable difficulty curve | -8 |
-| Narrative and level mismatch | -8 |
-| Missing metrics | -12 |
-| Missing acceptance criteria | -10 |
-| Missing test cases | -10 |

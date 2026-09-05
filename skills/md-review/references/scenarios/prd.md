@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `prd`. Checks whether the product require
 User stories + feature flows + business rules
 - Includes: **Requirements List** (a uniquely numbered list of all functional points)
 
-## Required Content (deduct if missing)
+## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
 
 ### Requirements Definition
 - [ ] **Background**: Is the reason for building this product/feature stated (problem/opportunity/market driver)?
@@ -50,17 +50,3 @@ User stories + feature flows + business rules
 - Requirements without numbers (untraceable)
 - Untestable acceptance criteria ("the system should work well")
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Missing requirements background | -10 |
-| Missing target users | -8 |
-| Requirements list missing/un-numbered | -15 |
-| Missing user stories | -8 |
-| Missing non-functional requirements | -8 |
-| Missing acceptance criteria | -10 |
-| Missing test cases | -10 |
-| Scope not defined | -8 |
-| Requirements without priority | -5 |
-| Edge cases not handled | -3 per occurrence |
-| 5W1H missing 2 or more items | -10 |

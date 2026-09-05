@@ -23,13 +23,14 @@ This dimension carries only 10% of the overall weight. Detailed linting (item-by
 - Incomplete `[text](url)` syntax (missing parentheses)
 - Relative paths that do not resolve from the current document location (e.g. `README.md` and `docs/guide.md` are valid relative destinations; verify the target exists instead of checking for a `./`/`../` prefix)
 
-## Scoring Guide (format dimension, out of 100)
+## Rule Index (count-based)
 
-| Finding | Deduction |
+Each rule below is one countable item: triggered at least once = 1 unmet item, and the occurrence count is reported in the findings as severity. A rule whose construct is absent from the document is N/A and is excluded from both numerator and denominator. Dimension score = (rules with no finding) ÷ (applicable rules) × 100.
+
+| # | Rule |
 |---|---|
-| Heading-level skip | -5 per occurrence |
-| Multiple H1s | -10 |
-| Step-numbering break (gap or duplicate) in an ordered list | -3 per occurrence |
-| Incomplete link syntax | -5 per occurrence |
+| 1 | Heading-level skip (H1 → H3 skipping H2) |
+| 2 | Multiple H1 headings |
+| 3 | Step-numbering break (gap or duplicate) in an ordered list |
+| 4 | Incomplete link syntax |
 
-Format dimension cap: when a rendering-level error exists (unclosed code block), the format score cannot exceed 60 — this cap applies after the per-finding deductions above; only minor issues score 80-95.

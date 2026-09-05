@@ -50,7 +50,7 @@ The scenario is optional. Without one, the review runs in generic mode (the scen
 | 5. | Redundancy | 10% | duplicated content, low-value information (generic) |
 | 6. | Format | 10% | rendering-critical formatting (detailed linting is the editor's job) |
 
-**Overall score = Σ(dimension score × weight)**. Dimensions that don't apply to the document are scored 100.
+**Overall score = Σ(dimension score × weight)**, where each **dimension score = (applicable items satisfied ÷ applicable items total) × 100**. Items are the checklist entries of the dimension's rule file or scenario checklist; per-unit items (counted per endpoint/feature/view) expand the denominator accordingly, and N/A items are excluded from both numerator and denominator. A dimension with 0 applicable items (including the scenario dimension in generic mode) is scored 100.
 
 ## Usage
 
@@ -142,7 +142,7 @@ Rules: @./references/logic-rules.md
 
 #### 2. Scenario completeness (25%, scenario-specific)
 
-Load the checklist for the scenario and verify every required item, both presence and quality. Each checklist contains "Core Questions" (what editors must address) and "Key Focus". Required content per scenario:
+Load the checklist for the scenario and verify every required item, both presence and quality. Every required item is a countable item: missing or under-specified = 1 unmet item in the scenario-completeness ratio. Each checklist contains "Core Questions" (what editors must address) and "Key Focus". Required content per scenario:
 
 **Report every checklist item individually.** An item that is absent or under-specified must appear as its own entry in the Missing Scenario Content section — do not merge several thin items into one row (e.g. folding an incomplete Physical View into "scalability content") just because the document also has larger P0 defects. Placeholder markers in the source ("no further details", "TBD", "to be defined", "lorem ipsum") count as under-specified.
 
@@ -191,7 +191,7 @@ Rules: @./references/format-rules.md
 
 #### Weighted scoring (100-point scale)
 
-**Overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — compute it with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]` (validates 0-100 and outputs grade + risk; `--p0` is the P0 issue count). In generic mode, pass `100` for the non-applicable scenario-completeness dimension — its weight still applies, so the weighted overall equals a renormalized five-dimension sum; the report templates keep that row visible with score 100.
+**Overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — each dimension score is the count ratio from its checklist or rule index (see "Overall score" definition above). Compute the weighted overall with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]` (validates 0-100 and outputs grade + risk; `--p0` is the P0 issue count); `--items PRESENT:APPLICABLE` converts one dimension's item counts to its 0-100 score. In generic mode, pass `100` for the non-applicable scenario-completeness dimension — its weight still applies, so the weighted overall equals a renormalized five-dimension sum; the report templates keep that row visible with score 100.
 
 | Overall | Grade | Action |
 |---|---|---|
@@ -286,7 +286,7 @@ Solo-mode exit codes (CI gate): `0` = no P0 and score ≥ `--pass-threshold`; `1
 - `scripts/probe.py` — metadata probe: lines / words / est. tokens / heading outline / preview (Phase 0)
 - `scripts/analyze_structure.py` — structural analysis: heading levels, code-block languages, tables/links/images, TODO/FIXME, heading skips (Phase 1)
 - `scripts/extract_refs.py` — extract and classify reference links (target existence is verified manually, used in dimension 4)
-- `scripts/score.py` — weighted scoring: overall score, grade, risk, 0-100 validation (Phase 4)
+- `scripts/score.py` — weighted scoring: overall score, grade, risk, 0-100 validation; `--items P:A` converts one dimension's item counts to its 0-100 score (Phase 4)
 
 ## Templates
 

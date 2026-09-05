@@ -11,20 +11,21 @@ Enabled when the scenario parameter is `fsd`. Checks whether the functional spec
 Input/output definitions + business rules + exception handling (a direct blueprint for writing test cases)
 - Includes: **Detailed Functional List** (atomic-level functional decomposition)
 
-## Required Content (deduct if missing)
+## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
 
 ### Functional Definition
 - [ ] **Feature Overview**: Is the overall responsibility of the feature module explained?
 - [ ] **Functional List**: Are features numbered (F-1, F-2...), each with a description?
-- [ ] **Feature Behavior**: Is each feature's specific behavior/rules defined (trigger condition → action → result)?
+- [ ] **Feature Behavior**: Is each feature's specific behavior/rules defined (trigger condition → action → result)? (counted per feature)
 - [ ] **Inter-feature Relationships**: Are dependencies/relationships between features explained?
 
-### Functional Details
-- [ ] **Input Definition**: Are the feature's inputs (parameters/data/operations) clear?
-- [ ] **Output Definition**: Are the feature's outputs (results/responses/side effects) clear?
+### Functional Details (the items marked below count once per feature where the document defines multiple features)
+- [ ] **Input Definition**: Are the feature's inputs (parameters/data/operations) clear? (counted per feature)
+- [ ] **Output Definition**: Are the feature's outputs (results/responses/side effects) clear? (counted per feature)
+- [ ] **State Diagram**: Is a state diagram provided where state transitions exist?
 - [ ] **Processing Logic**: Is the core processing logic/algorithm/rules described?
 - [ ] **Exception Handling**: Are failure/exception paths defined?
-- [ ] **Boundary Conditions**: Is the behavior for null values/extreme values/invalid input explained?
+- [ ] **Boundary Conditions**: Is the behavior for null values/extreme values/invalid input explained? (counted per feature)
 
 ### Scenarios and Use Cases
 - [ ] **Usage Scenarios**: Are typical usage scenarios described?
@@ -52,17 +53,3 @@ Input/output definitions + business rules + exception handling (a direct bluepri
 - Exception paths not described (only the normal flow written)
 - Features without test cases
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Functional list missing/un-numbered | -15 |
-| Incomplete feature behavior definitions | -5 per feature |
-| Missing input/output definitions | -5 per occurrence |
-| Missing exception handling | -8 |
-| Missing boundary conditions | -3 per occurrence |
-| Missing state diagram where state transitions exist | -8 |
-| Missing use cases | -10 |
-| Missing test cases | -10 |
-| Missing acceptance criteria | -10 |
-| Features without priority | -5 |
-| Feature dependencies not declared | -5 |

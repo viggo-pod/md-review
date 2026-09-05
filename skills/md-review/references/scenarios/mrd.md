@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `mrd`. Checks whether the market requirem
 ## Key Focus
 Market analysis + user pain points + core feature highlights
 
-## Required Content (deduct if missing)
+## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
 
 ### Market Analysis
 - [ ] **Market Background**: Are the market status/trends/size described?
@@ -43,17 +43,3 @@ Market analysis + user pain points + core feature highlights
 - Missing competitive analysis (cannot judge differentiation)
 - Requirements without priority
 
-## Scoring Guide
-| Finding | Deduction |
-|---|---|
-| Missing market background | -10 |
-| Missing target market | -10 |
-| Missing competitive analysis | -12 |
-| Missing user persona | -12 |
-| Requirements list missing/un-numbered | -15 |
-| Requirements without priority | -5 |
-| Missing value proposition | -10 |
-| Missing business model | -10 |
-| Missing success metrics | -8 |
-| 5W1H missing 2 or more items | -10 |
-| Risks/assumptions not identified | -8 |
