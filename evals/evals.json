@@ -1,4 +1,202 @@
 {
   "skill_name": "md-review",
-  "evals": []
+  "evals": [
+    {
+      "id": 0,
+      "name": "prd-scenario",
+      "prompt": "/md-review evals/docs/prd-test.md prd --solo --output report.md",
+      "expected_output": "PRD review: concurrency 1000 vs 5000 contradiction, retention 600/1000=30% miscalculation, >500-refund auto-approve, non-quantifiable acceptance criteria, broken link launch-checklist.md, missing 5W1H items",
+      "files": [
+        "evals/docs/prd-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Catches concurrency contradiction (1000 vs 5000)",
+        "Catches retention miscalculation (600/1000 != 30%)",
+        "Catches refund-flow logic flaw (>500 auto-approved)",
+        "Flags missing/non-quantifiable acceptance criteria",
+        "Flags broken link docs/launch-checklist.md",
+        "Scenario-completeness score equals the count ratio of unmet prd.md checklist items"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "api-scenario",
+      "prompt": "/md-review evals/docs/api-test.md api --solo --output report.md",
+      "expected_output": "API review: rate limit 200/min vs 6000/h, P99=0.5ms<200ms, response-envelope mismatch, 400 AUTH_FAILED conflict, missing auth, broken links",
+      "files": [
+        "evals/docs/api-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Catches rate-limit contradiction (200/min vs 6000/h)",
+        "Catches P99 latency below its own threshold (0.5ms < 200ms)",
+        "Catches response-envelope mismatch",
+        "Catches error-code conflict (400 AUTH_FAILED)",
+        "Flags missing authentication section",
+        "Scenario-completeness score equals the count ratio of unmet api.md checklist items (per-endpoint items expanded)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "gdd-scenario",
+      "prompt": "/md-review evals/docs/gdd-test.md gdd --solo --output report.md",
+      "expected_output": "GDD review: damage formula 10-5=4, undefined crit multiplier, m/s vs px/s unit mismatch, magnet acquisition conflict, undefined stardust key, missing death/respawn rules",
+      "files": [
+        "evals/docs/gdd-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Catches damage formula arithmetic error (10-5=4)",
+        "Catches undefined crit multiplier",
+        "Catches unit mismatch (m/s vs px/s)",
+        "Catches magnet acquisition conflict",
+        "Flags undefined stardust currency",
+        "Flags missing death/respawn edge-case rules (gdd.md sub-checkboxes)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "generic-no-scenario",
+      "prompt": "/md-review evals/docs/generic-test.md --solo --output report.md",
+      "expected_output": "Generic mode: throughput contradiction, retention 30 vs 90 days, duplicate heading, undefined ODS/DWD, broken link; no Missing Scenario Content section",
+      "files": [
+        "evals/docs/generic-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Catches throughput contradiction",
+        "Catches retention-period contradiction (30 vs 90 days)",
+        "Flags duplicate heading (redundancy)",
+        "Flags undefined terms (ODS/DWD)",
+        "No Missing Scenario Content section in generic mode",
+        "Scenario-completeness row kept at score 100 with weight applied"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "clean-api-precision",
+      "prompt": "/md-review evals/docs/clean-api.md api --solo --output report.md",
+      "expected_output": "PRECISION baseline: clean doc satisfies nearly all api.md checklist items (count ratio >= 85 overall), P0=0, no false positives",
+      "files": [
+        "evals/docs/clean-api.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Overall score >= 85",
+        "P0 bugs: 0",
+        "No false-positive findings on a clean document"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "clean-prd-precision",
+      "prompt": "/md-review evals/docs/clean-prd.md prd --solo --output report.md",
+      "expected_output": "PRECISION baseline (Chinese PRD): clean doc satisfies nearly all prd.md checklist items (count ratio >= 85 overall), P0=0, no false positives",
+      "files": [
+        "evals/docs/clean-prd.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Overall score >= 85",
+        "P0 bugs: 0",
+        "No false-positive findings on a clean document"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "clean-gdd-precision",
+      "prompt": "/md-review evals/docs/clean-gdd.md gdd --solo --output report.md",
+      "expected_output": "PRECISION baseline (Chinese GDD): clean doc satisfies nearly all gdd.md checklist items (count ratio >= 85 overall), P0=0, no false positives",
+      "files": [
+        "evals/docs/clean-gdd.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Overall score >= 85",
+        "P0 bugs: 0",
+        "No false-positive findings on a clean document"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "error-paths",
+      "prompt": "Error-handling paths: missing file / binary / non-UTF-8 / invalid scenario value / directory / non-md target -> per SKILL.md Error Handling + solo exit-code protocol",
+      "expected_output": "Missing file -> exit 2; binary detected and skipped without crash; non-UTF-8 processed as latin-1; invalid scenario lists the 14 valid values and exits with code 2; directory and non-md targets rejected by the path gate",
+      "files": [
+        "evals/docs/binary-file.md",
+        "evals/docs/latin1-file.md"
+      ],
+      "expectations": [
+        "Missing file rejected by validate_path.py with exit 2",
+        "Binary file detected (NUL check) and rejected/skipped without crash",
+        "Non-UTF-8 file processed as latin-1 without crash",
+        "Invalid scenario value lists the 14 valid values and exits with code 2 (no silent generic fallback)",
+        "Directory and non-md targets rejected by the path gate with exit 2"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "step-numbering-e2e",
+      "prompt": "/md-review evals/docs/numbering-break.md --solo --output report.md",
+      "expected_output": "E2E step-numbering detection: gap 1,2,4,5 and duplicate 1,2,2,3 flagged (Format), semantic-procedure gap also reported under Logic, sequential lists and T-IDs not flagged",
+      "files": [
+        "evals/docs/numbering-break.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Gap flagged (Deploy 1, 2, 4, 5)",
+        "Duplicate flagged (Rollback 1, 2, 2, 3)",
+        "Sequential lists not flagged (precision)",
+        "Identifier-style T-IDs not flagged (precision)"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "vague-unimplementable-rules",
+      "prompt": "/md-review evals/docs/vague-rules-test.md --solo --output report.md",
+      "expected_output": "Logic dimension flags unimplementable rules: no judgment standard, no boundary, qualitative adjective without concrete value",
+      "files": [
+        "evals/docs/vague-rules-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Flags rules with no judgment standard",
+        "Flags rules without boundary/threshold",
+        "Flags qualitative adjectives without concrete values"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "sensitive-info-disclosure",
+      "prompt": "/md-review evals/docs/secret-disclosure-test.md --solo --output report.md",
+      "expected_output": "Logic dimension flags sensitive information disclosure: plaintext password in connection string, real-format API key (sk-live-...), internal hostname + private IP",
+      "files": [
+        "evals/docs/secret-disclosure-test.md"
+      ],
+      "expectations": [
+        "Report ends with MD-REVIEW-SUMMARY block",
+        "Flags plaintext credentials (P0 per logic-rules Rule Index)",
+        "Flags real-format API keys",
+        "Flags internal hostnames / private addresses",
+        "Evidence in the report is redacted, not copied raw"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "path-gate-e2e",
+      "prompt": "Path-gate E2E: directory / non-md / missing file / binary -> validate_path.py rejects with exit 2; valid doc passes",
+      "expected_output": "Path gate rejects directory, non-md, missing, binary targets (exit 2, no review proceeds); valid doc passes",
+      "files": [
+        "evals/docs/binary-file.md"
+      ],
+      "expectations": [
+        "Directory target rejected with exit 2",
+        "Non-md extension rejected with exit 2",
+        "Missing file rejected with exit 2",
+        "Binary file rejected with exit 2",
+        "Valid .md target passes with exit 0"
+      ]
+    }
+  ]
 }

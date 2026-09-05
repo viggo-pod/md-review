@@ -63,7 +63,7 @@ checks = {
     "missing-file exit 2": ("missing" in t.lower() and "**2**" in t),
     "binary detected/skipped": ("binary" in t.lower() and ("skip" in t.lower() or "detect" in t.lower())),
     "non-utf8 encoding detected": ("latin-1" in t.lower() or "encoding" in t.lower() or "utf-8" in t.lower()),
-    "invalid scenario lists valid values": ("valid" in t.lower() and "generic" in t.lower()),
+    "invalid scenario lists valid values and exits 2": ("valid" in t.lower() and "exit" in t.lower() and "**2**" in t),
 }
 for name, okv in checks.items():
     print(f"    {'PASS' if okv else 'FAIL'}  {name}")
@@ -82,7 +82,7 @@ ok_reg = ok_trig = False
 try:
     evals = json.load(open(sys.argv[1]))
     ok_reg = evals.get("skill_name") == "md-review" and isinstance(evals.get("evals"), list)
-    print(f"    evals.json: skill_name={evals.get('skill_name')}, {len(evals.get('evals', []))} evals (registry reset for count-based scoring; new evals pending) -> {'PASS' if ok_reg else 'FAIL'}")
+    print(f"    evals.json: skill_name={evals.get('skill_name')}, {len(evals.get('evals', []))} count-based evals -> {'PASS' if ok_reg else 'FAIL'}")
 except Exception as e:
     print(f"    evals.json: FAIL ({e})")
 try:
