@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `gdd`. Checks whether the game design doc
 Game overview + core gameplay + system mechanics + narrative and world-building
 - Includes: **Core Mechanics List**, **Game Systems List**
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Core Design
 - [ ] **Core Gameplay Loop**: Is the player's core loop from start to finish clear (e.g., collect → craft → combat → upgrade → collect)?

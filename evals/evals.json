@@ -16,7 +16,7 @@
         "Catches refund-flow logic flaw (>500 auto-approved)",
         "Flags missing/non-quantifiable acceptance criteria",
         "Flags broken link docs/launch-checklist.md",
-        "Scenario-completeness score equals the count ratio of unmet prd.md checklist items",
+        "Scenario-completeness score equals the satisfied-item ratio against the prd.md checklist (satisfied ÷ applicable × 100, e.g. 15/22)",
         "Sensitivity: solo exit code 1 (P0 >= 1 or overall < 75)"
       ]
     },
@@ -35,7 +35,7 @@
         "Catches response-envelope mismatch",
         "Catches error-code conflict (400 AUTH_FAILED)",
         "Flags missing authentication section",
-        "Scenario-completeness score equals the count ratio of unmet api.md checklist items (per-endpoint items expanded)",
+        "Scenario-completeness score equals the satisfied-item ratio against the api.md checklist (satisfied ÷ applicable × 100, per-endpoint items expanded, e.g. 35/44)",
         "Sensitivity: solo exit code 1 (P0 >= 1 or overall < 75)"
       ]
     },

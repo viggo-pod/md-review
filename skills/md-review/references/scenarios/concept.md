@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `concept`. Checks whether the concept des
 ## Key Focus
 Game idea + market analysis + target audience + core selling points
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Game Idea
 - [ ] **Idea Overview**: Is the game's core idea clear and compelling (explainable in one paragraph)?

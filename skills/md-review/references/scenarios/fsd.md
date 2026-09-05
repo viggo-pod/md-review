@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `fsd`. Checks whether the functional spec
 Input/output definitions + business rules + exception handling (a direct blueprint for writing test cases)
 - Includes: **Detailed Functional List** (atomic-level functional decomposition)
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Functional Definition
 - [ ] **Feature Overview**: Is the overall responsibility of the feature module explained?

@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `tdd`. Checks whether the technical desig
 ## Key Focus
 System architecture + technology stack + coding standards + performance requirements
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Technical Specification Translation
 - [ ] **Requirements Mapping**: Are the design document's functional requirements mapped to concrete technical implementations?

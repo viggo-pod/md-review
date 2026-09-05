@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `ldd`. Checks whether the level design do
 Level layout + player paths + challenge configuration + pacing control
 - Includes: **Level List**, **Scene Interaction Elements List**
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Level Design
 - [ ] **Level List**: Are all levels numbered (L-1, L-2...), with objectives/theme/location?

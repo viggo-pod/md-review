@@ -103,7 +103,7 @@ Item counts behind the ratios (N/A constructs excluded from both numerator and d
 
 ## Highlights
 
-- Numeric system is genuinely cross-consistent: all six quest rewards recompute exactly from the income formula (§5.1 note pins the basis), the exchange ratios (2.5×/6×) and 50–67% margins in §4.3 recompute correctly, every tuning-knob safe range in §9 contains the value in use, and TC-1..TC-5 match their formulas.
+- Numeric system is genuinely cross-consistent: the five numeric credit rewards recompute exactly from the income formula (§5.1 note pins the basis; Q-6's 通关 reward is non-numeric and outside the check), the exchange ratios (2.5×/6×) and 50–67% margins in §4.3 recompute correctly, every tuning-knob safe range in §9 contains the value in use, and TC-1..TC-5 match their formulas.
 - §6 covers all four required edge-case classes with concrete values (24h timeout with no penalty, unlimited retry with a 3-fail hint, credit cap 99999 with overflow protection, part cap 999, dual-device read-only mode, save points and rollback with overwrite warning), and the clamp notes even prove the bounds are reachable (E=0.8 → factor 0.1).
 - §10 argues balance properly: it tests the dominant-strategy question under two accounting bases and concludes no single all-time-optimal strategy exists, cross-linked to the supply-cut event that constrains the pure-special route.
 - Inter-system dependencies (§5.3) are declared bidirectionally with an explicit no-deadlock argument (reputation only accumulates).

@@ -13,7 +13,7 @@ Task decomposition + dependency relationships + effort estimation + owner assign
 - Includes: **Task List** (with ID, description, priority, status, estimated person-days)
 - Linked to PRD/ADD, maintained by the engineering manager, dynamically updated
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Task Decomposition
 - [ ] **Task List**: Are all tasks numbered (T-1, T-2...), with ID/description/priority/status/estimated person-days?

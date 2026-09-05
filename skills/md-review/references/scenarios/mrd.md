@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `mrd`. Checks whether the market requirem
 ## Key Focus
 Market analysis + user pain points + core feature highlights
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Market Analysis
 - [ ] **Market Background**: Are the market status/trends/size described?

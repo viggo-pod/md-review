@@ -46,7 +46,7 @@ def analyze(md_path):
             elif marker[0] == fence_char and len(marker) >= fence_len and not info:
                 in_fence = False
             continue
-        if not in_fence and l.startswith("#"):
+        if not in_fence and re.match(r"^ {0,3}#{1,6}(\s|$)", l):
             heads.append((i + 1, l))
     levels = Counter(len(re.match(r"^(#+)", h).group(1)) for _, h in heads)
     print(f"Heading levels: {dict(sorted(levels.items()))} | Total headings: {len(heads)}")

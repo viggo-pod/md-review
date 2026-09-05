@@ -38,7 +38,14 @@ def extract_refs(md_path):
                 depth -= 1
             i += 1
         if depth == 0:
-            links.append((m.group(1), content[start:i - 1].strip()))
+            dest = content[start:i - 1].strip()
+            if dest.startswith("<") and dest.endswith(">"):
+                dest = dest[1:-1]
+            else:
+                tm = re.match(r'(\S+)(?:\s+.*)?$', dest, re.S)
+                if tm:
+                    dest = tm.group(1)
+            links.append((m.group(1), dest))
 
     # Extract ![alt](path) images
     images = re.findall(r'!\[([^\]]*)\]\(([^)]+)\)', content)

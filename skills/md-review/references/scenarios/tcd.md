@@ -13,7 +13,7 @@ Case numbering + test steps + input data + expected output + prerequisites
 - Includes: **Test Case Set** (with linked requirement IDs, priority, execution result)
 - Written by the QA team; the basis for automation scripts and manual testing
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Case Structure
 - [ ] **Case Numbering**: Does each case have a unique number (TC-1, TC-2...)?

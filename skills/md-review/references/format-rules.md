@@ -25,12 +25,16 @@ This dimension carries only 10% of the overall weight. Detailed linting (item-by
 
 ## Rule Index (count-based)
 
-Each rule below is one countable item: triggered at least once = 1 unmet item, and the occurrence count is reported in the findings as severity. A rule whose construct is absent from the document is N/A and is excluded from both numerator and denominator. Dimension score = (rules with no finding) ÷ (applicable rules) × 100.
+Each rule below is one countable item and applies to every document: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. The absence of required content (e.g., a missing overview or conclusion) is itself a finding — never an N/A. N/A is reserved for items that genuinely cannot apply to the document and must be justified in the report. Dimension score = (rules with no finding) ÷ (total rules) × 100.
 
 | # | Rule |
 |---|---|
 | 1 | Heading-level skip (H1 → H3 skipping H2) |
 | 2 | Multiple H1 headings |
-| 3 | Step-numbering break (gap or duplicate) in an ordered list |
-| 4 | Incomplete link syntax |
+| 3 | Missing blank line before a setext heading that directly follows a paragraph |
+| 4 | Unclosed fenced code block |
+| 5 | Unclosed inline code span |
+| 6 | Step-numbering break (gap or duplicate) in an ordered list |
+| 7 | Incomplete link syntax |
+| 8 | Relative path that does not resolve from the current document location |
 

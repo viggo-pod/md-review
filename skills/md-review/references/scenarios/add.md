@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `add`. Checks whether the architecture de
 System layering + data flow + deployment topology
 - Includes: **Module List** (a list of all subsystems/services)
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Architecture Views
 - [ ] **Logical View**: Are the system functional decomposition, module responsibilities, and interaction relationships described?

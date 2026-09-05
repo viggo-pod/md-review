@@ -22,7 +22,7 @@ An invalid scenario value (not one of the 14 defined scenarios) must **not** fal
 
 - The path gate rejects every invalid target class (missing / directory / non-md / binary) with a clear stderr message and exit **2**, before any probe or review runs.
 - The helper scripts fail gracefully (no tracebacks) on binary input and apply the documented latin-1 encoding fallback for non-UTF-8 text.
-- The solo exit-code contract (`0` pass / `1` findings below threshold / `2` error) is consistent with the observed behavior.
+- The solo exit-code contract: this protocol exercised and captured exit codes `0` and `2` only; exit code `1` (findings below threshold) is covered by the defect-fixture sensitivity reviews, not by this protocol.
 
 MD-REVIEW-SUMMARY
 File: (error-path protocol exercise) | P0 bugs: 0 | Scenario gaps: 0 | Fixable: 0 | Generated: 2026-09-05

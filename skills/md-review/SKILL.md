@@ -191,7 +191,7 @@ Rules: @./references/format-rules.md
 
 #### Weighted scoring (100-point scale)
 
-**Overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — each dimension score is the count ratio from its checklist or rule index (see "Overall score" definition above). Compute the weighted overall with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]` (validates 0-100 and outputs grade + risk; `--p0` is the P0 issue count); `--items PRESENT:APPLICABLE` converts one dimension's item counts to its 0-100 score. In generic mode, pass `100` for the non-applicable scenario-completeness dimension — its weight still applies, so the weighted overall equals a renormalized five-dimension sum; the report templates keep that row visible with score 100.
+**Overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — each dimension score is the count ratio from its checklist or rule index (see "Overall score" definition above). Compute the weighted overall with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]` (validates 0-100 and outputs grade + risk; `--p0` is the P0 issue count); `--items PRESENT:APPLICABLE` converts one dimension's item counts to its 0-100 score. In generic mode, pass `100` for the non-applicable scenario-completeness dimension — this contributes a fixed 25 points (0.25 × 100) to the overall score; the report templates keep that row visible with score 100.
 
 | Overall | Grade | Action |
 |---|---|---|

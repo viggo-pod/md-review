@@ -91,7 +91,7 @@ checks = {
     "missing-file exit 2": ("missing" in t.lower() and "**2**" in t),
     "binary detected/skipped": ("binary" in t.lower() and ("skip" in t.lower() or "detect" in t.lower())),
     "non-utf8 encoding detected": ("latin-1" in t.lower() or "encoding" in t.lower() or "utf-8" in t.lower()),
-    "invalid scenario lists valid values and exits 2": ("valid" in t.lower() and "exit" in t.lower() and "**2**" in t),
+    "invalid scenario lists all 14 valid values with exit 2": all(s in t for s in ("prd", "adr", "add", "api", "brd", "mrd", "fsd", "gdd", "gdo", "tdd", "ldd", "concept", "tld", "tcd")) and "code **2**" in t,
 }
 for name, okv in checks.items():
     print(f"    {'PASS' if okv else 'FAIL'}  {name}")
@@ -109,8 +109,12 @@ import json, sys
 ok_reg = ok_trig = False
 try:
     evals = json.load(open(sys.argv[1]))
-    ok_reg = evals.get("skill_name") == "md-review" and isinstance(evals.get("evals"), list)
-    print(f"    evals.json: skill_name={evals.get('skill_name')}, {len(evals.get('evals', []))} count-based evals -> {'PASS' if ok_reg else 'FAIL'}")
+    ev = evals.get("evals", [])
+    ids = sorted(e["id"] for e in ev)
+    fields_ok = all(e.get(k) for e in ev for k in ("name", "prompt", "expected_output", "expectations"))
+    ok_reg = (evals.get("skill_name") == "md-review" and isinstance(ev, list) and len(ev) == 12
+              and ids == list(range(12)) and fields_ok)
+    print(f"    evals.json: skill_name={evals.get('skill_name')}, {len(ev)} count-based evals, ids 0-11, required fields present -> {'PASS' if ok_reg else 'FAIL'}")
 except Exception as e:
     print(f"    evals.json: FAIL ({e})")
 try:

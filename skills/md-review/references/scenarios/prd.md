@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `prd`. Checks whether the product require
 User stories + feature flows + business rules
 - Includes: **Requirements List** (a uniquely numbered list of all functional points)
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Requirements Definition
 - [ ] **Background**: Is the reason for building this product/feature stated (problem/opportunity/market driver)?

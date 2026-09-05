@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `gdo`. Checks whether the game overview d
 ## Key Focus
 Executive summary + core concept + target audience + key features
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Core Overview
 - [ ] **Executive Summary**: Is what the game is and why it's worth making clearly explained within one page?

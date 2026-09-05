@@ -68,6 +68,9 @@ if __name__ == "__main__":
             print("Error: --items requires PRESENT:APPLICABLE integers", file=sys.stderr)
             sys.exit(2)
         del args[i:i + 2]
+        if args or "--items" in args:
+            print("Error: --items takes exactly one PRESENT:APPLICABLE value and no other arguments", file=sys.stderr)
+            sys.exit(2)
         if present < 0 or applicable < 0 or present > applicable:
             print("Error: --items requires 0 <= PRESENT <= APPLICABLE", file=sys.stderr)
             sys.exit(2)

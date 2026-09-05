@@ -24,7 +24,7 @@ Reviews ONE Markdown document per invocation across 14 document scenarios (PRD, 
 - **14 scenarios** — each with its own required-content checklist (acceptance criteria, 5W1H, endpoint contracts, error codes, test cases, …).
 - **6 weighted dimensions** — Logic 30%, Scenario completeness 25%, Sections 15%, References 10%, Redundancy 10%, Format 10%. **Overall = Σ(dimension score × weight)**, 100-point scale; each dimension score is the ratio of satisfied items in its checklist or rule index (counted per applicable item) × 100.
 - **CI-ready** — `--solo` mode with exit-code gate (`--pass-threshold`, default 75) and a machine-readable `MD-REVIEW-SUMMARY` block as the last line of every report.
-- **Self-validating** — ships injected-defect fixtures, a trigger-query set, and a one-command regression harness (`bash evals/run_self_test.sh`); the eval registry was reset for the count-based scoring redesign and new evals are being re-established.
+- **Self-validating** — ships 12 count-based evals, 8 reference reports, injected-defect fixtures, a trigger-query set, and a one-command regression harness (`bash evals/run_self_test.sh`).
 
 ## Scenarios
 
@@ -125,9 +125,10 @@ Score-table-only review of an API document.
 
 The repo includes its own evaluation suite under `evals/`:
 
-- `bash evals/run_self_test.sh` — regression harness: scripted checks (script function-point verification via `verify_scripts.py`, registry integrity) run always; agent-based checks (clean-doc precision, error-handling protocol, step-numbering detection) re-activate as new eval reports are added.
+- `bash evals/run_self_test.sh` — regression harness: scripted checks (script function-point verification via `verify_scripts.py`, registry integrity) always run; agent-based checks validate the reference reports — clean-doc precision (≥85, P0=0), defect-fixture sensitivity (rejected: P0≥1 or <75), error-handling protocol, step-numbering detection.
 - `evals/docs/` — 23 fixtures: 16 scenario documents with injected defects, 3 clean documents, plus binary/non-UTF-8/step-numbering/generic edge cases.
-- `evals/evals.json` — eval registry, reset to an empty skeleton for the count-based scoring redesign; new evals are being re-established.
+- `evals/evals.json` — 12 count-based eval definitions (4 defect-scenario reviews, generic review, 3 clean-doc precision, error paths, step-numbering, vague-rules, sensitive-info, path-gate).
+- `evals/reports/` — 8 reference reports: 3 clean-doc precision, 3 defect-fixture sensitivity, error-path protocol, step-numbering detection.
 - `evals/trigger-eval-set.json` — 20 trigger/no-trigger queries validating skill activation.
 
 In the development benchmark (round 3, 40-run matrix), the skill passed 212/213 runs (99.5%), and 100% of injected defects were detected.

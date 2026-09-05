@@ -10,7 +10,7 @@ Enabled when the scenario parameter is `brd`. Checks whether the business requir
 ## Key Focus
 Business value + cost estimation + return on investment
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Business Background
 - [ ] **Business Goals**: Are the business goals the project must achieve clear (revenue/market share/cost/growth)?

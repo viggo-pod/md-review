@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `api`. Checks whether the API document co
 Endpoint contracts + data models + error dictionary
 - Includes: **Error Code List** (all error codes and their meanings)
 
-## Required Content (each item counted if missing; N/A items are excluded from both numerator and denominator)
+## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
 ### Interface Specification
 - [ ] **Interface Overview**: Are the document's purpose/service scope explained?
