@@ -125,10 +125,10 @@ Score-table-only review of an API document.
 
 The repo includes its own evaluation suite under `evals/`:
 
-- `bash evals/run_self_test.sh` — 5/5 regression checks: script function-point verification, clean-doc precision baselines (no false positives on clean PRD/API/GDD), error-handling protocol (missing/binary/non-UTF-8 → exit 2), registry integrity, step-numbering-break detection.
-- `evals/docs/` — 21 fixtures: 15 scenario documents with injected defects, 3 clean documents, plus binary/non-UTF-8/step-numbering edge cases.
-- `evals/evals.json` — 10 eval definitions (scenario reviews, clean-doc precision, error paths, step-numbering).
-- `evals/reports/` — reference reports for clean documents and protocol edge cases (clean-api 95.0, clean-prd 93.3, clean-gdd 93.3, all 0 P0).
+- `bash evals/run_self_test.sh` — regression harness: scripted checks (script function-point verification via `verify_scripts.py`, registry integrity) run always; agent-based checks (clean-doc precision, error-handling protocol, step-numbering detection) re-activate as new eval reports are added.
+- `evals/docs/` — 23 fixtures: 15 scenario documents with injected defects, 3 clean documents, plus binary/non-UTF-8/step-numbering edge cases.
+- `evals/evals.json` — eval registry, reset to an empty skeleton for the count-based scoring redesign; new evals are being re-established.
+- `evals/trigger-eval-set.json` — 20 trigger/no-trigger queries validating skill activation.
 
 In the development benchmark (round 3, 40-run matrix), the skill passed 212/213 runs (99.5%), and 100% of injected defects were detected.
 
