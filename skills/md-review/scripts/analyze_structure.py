@@ -48,7 +48,7 @@ def analyze(md_path):
             continue
         if not in_fence and re.match(r"^ {0,3}#{1,6}(\s|$)", l):
             heads.append((i + 1, l))
-    levels = Counter(len(re.match(r"^(#+)", h).group(1)) for _, h in heads)
+    levels = Counter(len(re.match(r"^\s*(#+)", h).group(1)) for _, h in heads)
     print(f"Heading levels: {dict(sorted(levels.items()))} | Total headings: {len(heads)}")
     print(f"Code-block languages: {dict(langs) if langs else 'none'}")
 
@@ -63,7 +63,7 @@ def analyze(md_path):
     skips = []
     prev = 0
     for num, h in heads:
-        level = len(re.match(r"^(#+)", h).group(1))
+        level = len(re.match(r"^\s*(#+)", h).group(1))
         if prev and level > prev + 1:
             skips.append((num, h))
         prev = level
