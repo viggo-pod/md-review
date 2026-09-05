@@ -126,7 +126,7 @@ Score-table-only review of an API document.
 The repo includes its own evaluation suite under `evals/`:
 
 - `bash evals/run_self_test.sh` — regression harness: scripted checks (script function-point verification via `verify_scripts.py`, registry integrity) run always; agent-based checks (clean-doc precision, error-handling protocol, step-numbering detection) re-activate as new eval reports are added.
-- `evals/docs/` — 23 fixtures: 15 scenario documents with injected defects, 3 clean documents, plus binary/non-UTF-8/step-numbering edge cases.
+- `evals/docs/` — 23 fixtures: 16 scenario documents with injected defects, 3 clean documents, plus binary/non-UTF-8/step-numbering/generic edge cases.
 - `evals/evals.json` — eval registry, reset to an empty skeleton for the count-based scoring redesign; new evals are being re-established.
 - `evals/trigger-eval-set.json` — 20 trigger/no-trigger queries validating skill activation.
 
