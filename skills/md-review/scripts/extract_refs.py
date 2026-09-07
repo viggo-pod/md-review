@@ -29,6 +29,7 @@ def extract_refs(md_path):
     # Extract [text](url) links with balanced parentheses in the destination
     # ((?<!!) excludes ![alt](path) image syntax to avoid double counting)
     links = []
+    link_spans = []
     for m in re.finditer(r'(?<!!)\[([^\]]+)\]\(', content):
         start, depth, i = m.end(), 1, m.end()
         while i < len(content) and depth:
@@ -47,12 +48,16 @@ def extract_refs(md_path):
                 if tm:
                     dest = tm.group(1)
             links.append((m.group(1), dest))
+            link_spans.append((start, i - 1))
 
     # Extract ![alt](path) images
     images = re.findall(r'!\[([^\]]*)\]\(([^)]+)\)', content)
 
-    # Extract <url> bare links
-    bare_urls = re.findall(r'<(https?://[^>]+)>', content)
+    # Extract <url> bare links, skipping URLs already parsed as link destinations
+    bare_urls = []
+    for bm in re.finditer(r'<(https?://[^>]+)>', content):
+        if not any(bs <= bm.start() and bm.end() <= be for bs, be in link_spans):
+            bare_urls.append(bm.group(1))
 
     print("=== Markdown Reference Extraction ===")
     print(f"Document: {md_path}")

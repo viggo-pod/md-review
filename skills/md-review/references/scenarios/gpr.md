@@ -25,7 +25,7 @@ Change narrative + merge-safety evidence + issue traceability
 
 ### Traceability
 - [ ] **Linked Issues**: Are the driving issues linked with closing keywords (Fixes #N / Closes #N)?
-- [ ] **Draft Open Questions**: For a draft/RFC PR, is what feedback is wanted listed?
+- [ ] **Draft Open Questions**: For a draft/RFC PR, is the requested feedback listed?
 - [ ] **Template Checkboxes**: Are the repo's PR-template items addressed rather than left untouched?
 
 ### 5W1H Check (PR context)
