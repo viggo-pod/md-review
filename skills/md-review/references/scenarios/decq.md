@@ -20,6 +20,7 @@ Entry-level decision fields + machine-judgeable state + async handoff resumabili
 
 ### Per-Entry Content (each checkbox in this section counts once per decision entry defined in the document)
 - [ ] **Background**: Does each entry state which step blocked and why it is ambiguous?
+- [ ] **Blocking Impact / Priority**: Is each entry marked blocking (its branch suspends until the result is filled) or defaultable (the branch proceeds with the prefilled recommendation if left unfilled)?
 - [ ] **Options**: Does each entry list at least 2 options?
 - [ ] **Prefilled Recommendation**: Is one option marked as recommended with a reason?
 - [ ] **Decision Result Field**: Does each entry reserve an explicit field for the human decision (A / B / other: free text)?
