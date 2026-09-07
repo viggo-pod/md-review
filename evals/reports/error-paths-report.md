@@ -16,7 +16,7 @@ Exercise of the md-review error-handling and exit-code protocol defined in `skil
 
 ## Invalid Scenario Protocol
 
-An invalid scenario value (not one of the 14 defined scenarios) must **not** fall back to a generic review. Per SKILL.md Error Handling, the reviewer lists the 14 valid values — `prd, adr, add, api, brd, mrd, fsd, gdd, gdo, tdd, ldd, concept, tld, tcd` — and exits with code **2**, so a typo can never silently skip the scenario-completeness dimension.
+An invalid scenario value (not one of the 17 defined scenarios) must **not** fall back to a generic review. Per SKILL.md Error Handling, the reviewer lists the 17 valid values — `prd, adr, add, api, brd, mrd, fsd, gdd, gdo, tdd, ldd, concept, tld, tcd, decq, issue, gpr` — and exits with code **2**, so a typo can never silently skip the scenario-completeness dimension.
 
 ## Conclusion
 

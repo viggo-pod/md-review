@@ -1,7 +1,7 @@
 ---
 name: md-review
-description: 'Review Markdown documents with scenario-aware weighted scoring, prioritizing bug and logic-error detection over style. Use this skill whenever the user asks to review, audit, check, or grade any Markdown document — review this doc, check the markdown for bugs, find logic errors, verify references, detect redundancy, check formatting, score or grade a document, review a PRD/ADR/API spec/GDD/FSD/MRD/BRD/task list/test case/level design/technical design/concept document, audit documentation, or run a document quality gate before release.'
-argument-hint: '[path] [scenario: prd|adr|add|api|brd|mrd|fsd|gdd|gdo|tdd|ldd|concept|tld|tcd] [--dimensions 1,2,3,4,5,6] [--format full|summary|fix] [--solo] [--pass-threshold N] [--output file] [json]'
+description: 'Review Markdown documents with scenario-aware weighted scoring, prioritizing bug and logic-error detection over style. Use this skill whenever the user asks to review, audit, check, or grade any Markdown document — review this doc, check the markdown for bugs, find logic errors, verify references, detect redundancy, check formatting, score or grade a document, review a PRD/ADR/API spec/GDD/FSD/MRD/BRD/task list/test case/level design/technical design/concept document, review a pending-decision register, GitHub issue draft, or PR description, audit documentation, or run a document quality gate before release.'
+argument-hint: '[path] [scenario: prd|adr|add|api|brd|mrd|fsd|gdd|gdo|tdd|ldd|concept|tld|tcd|decq|issue|gpr] [--dimensions 1,2,3,4,5,6] [--format full|summary|fix] [--solo] [--pass-threshold N] [--output file] [json]'
 user-invocable: true
 allowed-tools: Read, Glob, Grep, Write, Edit, Bash, SearchExtraTools
 model: sonnet
@@ -38,6 +38,9 @@ The scenario is optional. Without one, the review runs in generic mode (the scen
 | `concept` | Concept Design Document | game concept, market analysis, core selling points |
 | `tld` | Task List Document | task decomposition, dependencies, effort estimates, owners |
 | `tcd` | Test Case Document | case IDs, test steps, inputs/outputs, requirement traceability |
+| `decq` | Pending Decision Register | entry IDs, open/closed state, prefilled options, decision-result field, machine-readable closure |
+| `issue` | GitHub Issue Draft | ticket skeleton, four sub-forms, state/label traceability, closure criteria, Fixes #N |
+| `gpr` | GitHub PR Description | summary, change list, test plan, breaking changes, linked issues |
 
 ## Review Dimensions & Weights
 
@@ -55,7 +58,7 @@ The scenario is optional. Without one, the review runs in generic mode (the scen
 ## Usage
 
 ```
-/md-review <path> <scenario: prd|adr|add|api|brd|mrd|fsd|gdd|gdo|tdd|ldd|concept|tld|tcd (optional)> [--dimensions 1,2,3,4,5,6] [--format full|summary|fix] [--solo] [--pass-threshold N] [--output file] [json]
+/md-review <path> <scenario: prd|adr|add|api|brd|mrd|fsd|gdd|gdo|tdd|ldd|concept|tld|tcd|decq|issue|gpr (optional)> [--dimensions 1,2,3,4,5,6] [--format full|summary|fix] [--solo] [--pass-threshold N] [--output file] [json]
 ```
 
 - **path** — the Markdown file to review
@@ -160,8 +163,11 @@ Load the checklist for the scenario and verify every required item, both presenc
 - **Concept**: concept appeal / market potential / competitor analysis / go-no-go rationale / core selling points
 - **TLD**: task decomposition granularity / dependencies / effort estimates / owners & acceptance criteria / task list
 - **TCD**: positive / boundary / exception coverage / preconditions / verifiable expected results / requirement traceability / test case set
+- **DECQ**: register skeleton (unique entry IDs + open/closed status) / per-entry background, ≥2 options with prefilled recommendation, decision-result field / machine-judgeable closure criterion (result non-empty, no placeholder residue) / consumption order & dependency rules / final disposition (archive or ADR promotion)
+- **ISSUE**: ticket skeleton (number, state + close reason, declared sub-form, labels/assignee/milestone) / body per declared sub-form (work ticket, clarification, decision entry, defect report) / linked artifacts (Fixes #N) / decidable closure criteria
+- **GPR**: summary / enumerated change list / test plan / breaking changes & migration / linked issues with closing keywords / draft open questions
 
-Checklists: load the matching file under references/scenarios/ (prd.md / adr.md / add.md / api.md / brd.md / mrd.md / fsd.md / gdd.md / gdo.md / tdd.md / ldd.md / concept.md / tld.md / tcd.md)
+Checklists: load the matching file under references/scenarios/ (prd.md / adr.md / add.md / api.md / brd.md / mrd.md / fsd.md / gdd.md / gdo.md / tdd.md / ldd.md / concept.md / tld.md / tcd.md / decq.md / issue.md / gpr.md)
 
 #### 3. Sections (15%, generic)
 
@@ -251,7 +257,7 @@ Only after approval, edit with Edit/Write. Mechanical fixes safe to auto-apply w
 - **Path validation (run `scripts/validate_path.py <path>` first)**: rejects directories, a missing file, a non-`*.md` extension, and binary/undecodable content — all with a clear stderr message and exit `2`
 - Missing file / binary file / non-UTF-8 encoding: the helper scripts (`probe.py` / `analyze_structure.py` / `extract_refs.py`) also handle these themselves: missing or binary (NUL-containing) input → clear stderr message and exit `2`; non-UTF-8 text that decodes as latin-1 is processed normally
 - `extract_refs.py` failure: fall back to manual link checking
-- Invalid scenario value (not in the 14 scenarios): list the valid values and exit with code 2
+- Invalid scenario value (not in the 17 scenarios): list the valid values and exit with code 2
 
 Solo-mode exit codes (CI gate): `0` = no P0 and score ≥ `--pass-threshold`; `1` = P0 issues exist or score below threshold; `2` = error (missing file, invalid arguments, undecodable input).
 
@@ -279,6 +285,9 @@ Solo-mode exit codes (CI gate): `0` = no P0 and score ≥ `--pass-threshold`; `1
 - `references/scenarios/concept.md` — Concept Design Document
 - `references/scenarios/tld.md` — Task List Document
 - `references/scenarios/tcd.md` — Test Case Document
+- `references/scenarios/decq.md` — Pending Decision Register (Decision Queue)
+- `references/scenarios/issue.md` — GitHub Issue Draft
+- `references/scenarios/gpr.md` — GitHub PR Description
 
 ## Helper Scripts
 
