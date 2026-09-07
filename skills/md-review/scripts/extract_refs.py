@@ -39,8 +39,9 @@ def extract_refs(md_path):
             i += 1
         if depth == 0:
             dest = content[start:i - 1].strip()
-            if dest.startswith("<") and dest.endswith(">"):
-                dest = dest[1:-1]
+            angle = re.match(r'^<([^>]*)>(?:\s+.*)?$', dest, re.S)
+            if angle:
+                dest = angle.group(1)
             else:
                 tm = re.match(r'(\S+)(?:\s+.*)?$', dest, re.S)
                 if tm:

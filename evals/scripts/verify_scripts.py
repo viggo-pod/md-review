@@ -215,6 +215,18 @@ check("extract_refs: suspicious empty/#", "Empty link" in out)
 check("extract_refs: suspicious localhost", "localhost" in out)
 check("extract_refs: usage error without arg", run("extract_refs.py").returncode == 1)
 
+angle_fx = tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8")
+angle_fx.write('[titled](<docs/guide.md> "Guide") and [plain](docs/plain.md "T")\n')
+angle_fx.close()
+ra = run("extract_refs.py", angle_fx.name)
+aout = ra.stdout
+check("extract_refs: angle fixture exit 0", ra.returncode == 0)
+check("extract_refs: titled links count=2", "Text links: 2" in aout)
+check("extract_refs: angle destination brackets stripped",
+      "-> docs/guide.md" in aout and "-> <docs/guide.md>" not in aout)
+check("extract_refs: link title separated from destination",
+      "-> docs/plain.md" in aout and '"Guide"' not in aout)
+
 print()
 print("=" * 70)
 print("COVERAGE VERIFICATION — score.py")

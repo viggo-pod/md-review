@@ -72,6 +72,7 @@ EOF
     [ $? -eq 0 ] || SENS_ALL_PASS=0
   else
     echo "  SKIP  ${DEFECT}-report.md not found — run an agent review of evals/docs/${DEFECT}.md and save the report to evals/reports/${DEFECT}-report.md"
+    SENS_ALL_PASS=0
   fi
 done
 if [ "$SENS_ALL_PASS" -eq 1 ]; then
