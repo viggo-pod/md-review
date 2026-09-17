@@ -1,0 +1,12 @@
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
+.serena/
+evals/reports/

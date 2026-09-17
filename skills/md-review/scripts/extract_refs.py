@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+"""Extract and classify all reference links in a Markdown document (target existence is verified manually by the reviewer)."""
+
+import re
+import sys
+from pathlib import Path
+
+def read_text_safe(md_path):
+    """Read a file, trying utf-8 first then common encodings; exit 2 on missing/binary."""
+    p = Path(md_path)
+    if not p.is_file():
+        print(f"Error: file not found: {md_path}", file=sys.stderr)
+        sys.exit(2)
+    raw = p.read_bytes()
+    if b"\x00" in raw:
+        print(f"Error: binary file (contains NUL bytes): {md_path}", file=sys.stderr)
+        sys.exit(2)
+    for enc in ("utf-8", "latin-1"):
+        try:
+            return raw.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    print(f"Error: cannot decode file: {md_path}", file=sys.stderr)
+    sys.exit(2)
+
+def extract_refs(md_path):
+    content = read_text_safe(md_path)
+
+    # 提取目标地址中允许嵌套括号的 [text](url) 链接。
+    # ((?<!!) 排除 ![alt](path), 避免图片被重复计为文本链接。
+    links = []
+    link_spans = []
+    for m in re.finditer(r'(?<!!)\[([^\]]+)\]\(', content):
+        start, depth, i = m.end(), 1, m.end()
+        while i < len(content) and depth:
+            if content[i] == '(':
+                depth += 1
+            elif content[i] == ')':
+                depth -= 1
+            i += 1
+        if depth == 0:
+            dest = content[start:i - 1].strip()
+            angle = re.match(r'^<([^>]*)>(?:\s+.*)?$', dest, re.S)
+            if angle:
+                dest = angle.group(1)
+            else:
+                tm = re.match(r'(\S+)(?:\s+.*)?$', dest, re.S)
+                if tm:
+                    dest = tm.group(1)
+            links.append((m.group(1), dest))
+            link_spans.append((start, i - 1))
+
+    # 提取图片, 并记录目标地址范围, 避免角括号 URL 再被识别为裸 URL。
+    images = []
+    image_spans = []
+    for m in re.finditer(r'!\[([^\]]*)\]\(([^)]+)\)', content):
+        raw_dest = m.group(2).strip()
+        angle = re.match(r'^<([^>]*)>(?:\s+.*)?$', raw_dest, re.S)
+        if angle:
+            path = angle.group(1)
+        else:
+            tm = re.match(r'(\S+)(?:\s+.*)?$', raw_dest, re.S)
+            path = tm.group(1) if tm else raw_dest
+        images.append((m.group(1), path))
+        image_spans.append((m.start(2), m.end(2)))
+
+    # 提取 <url> 裸链接, 跳过已被文本链接或图片目标覆盖的范围。
+    bare_urls = []
+    parsed_spans = link_spans + image_spans
+    for bm in re.finditer(r'<(https?://[^>]+)>', content):
+        if not any(bs <= bm.start() and bm.end() <= be for bs, be in parsed_spans):
+            bare_urls.append(bm.group(1))
+
+    print("=== Markdown Reference Extraction ===")
+    print(f"Document: {md_path}")
+    print(f"Text links: {len(links)}")
+    print(f"Image references: {len(images)}")
+    print(f"Bare URLs: {len(bare_urls)}")
+    print()
+
+    all_refs = []
+
+    for text, url in links:
+        all_refs.append({"type": "link", "text": text, "url": url})
+
+    for alt, path in images:
+        all_refs.append({"type": "image", "text": alt, "url": path})
+
+    for url in bare_urls:
+        all_refs.append({"type": "bare_url", "text": url, "url": url})
+
+    # Classify output
+    internal = [r for r in all_refs if not r["url"].startswith(('http://', 'https://'))]
+    external = [r for r in all_refs if r["url"].startswith(('http://', 'https://'))]
+
+    if internal:
+        print("--- Internal References ---")
+        for r in internal:
+            print(f"  [{r['type']}] {r['text'][:30]}... -> {r['url']}")
+
+    if external:
+        print("--- External References ---")
+        for r in external:
+            print(f"  [{r['type']}] {r['text'][:30]}... -> {r['url']}")
+
+    # Check for suspicious references
+    suspicious = []
+    for r in all_refs:
+        url = r["url"]
+        if url.startswith('http://'):
+            suspicious.append((r, "Insecure HTTP protocol"))
+        elif url == '#' or url == '':
+            suspicious.append((r, "Empty link or placeholder"))
+        elif url.startswith('http') and 'localhost' in url:
+            suspicious.append((r, "Link contains localhost"))
+
+    if suspicious:
+        print()
+        print("--- Suspicious References ---")
+        for r, reason in suspicious:
+            print(f"  ⚠️ {reason}: {r['url']}")
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("Usage: python3 extract_refs.py <markdown-file>")
+        sys.exit(1)
+    extract_refs(sys.argv[1])

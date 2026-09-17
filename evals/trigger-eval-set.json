@@ -1,0 +1,82 @@
+[
+  {
+    "query": "帮我审查一下这份 PRD：/projects/checkout/prd.md，重点看需求有没有自相矛盾的地方，比如并发数和留存率的数值",
+    "should_trigger": true
+  },
+  {
+    "query": "马上要发版了，把这封 API 文档过一遍质量门，重点是 bug 和逻辑错误，输出完整评分和 P0 问题列表",
+    "should_trigger": true
+  },
+  {
+    "query": "review this API spec for broken links and contract inconsistencies before we hand it to the backend team: docs/api/v2.md",
+    "should_trigger": true
+  },
+  {
+    "query": "这份 ADR 的备选方案分析是不是太单薄了？帮我审计一下 decision rationale 和 consequences 是否完整",
+    "should_trigger": true
+  },
+  {
+    "query": "我们的游戏 GDD 数值表有矛盾，帮我检查 gdd/combat.md 里的伤害公式和暴击倍率有没有未定义的变量",
+    "should_trigger": true
+  },
+  {
+    "query": "给这份技术设计方案打个分，满分100，按维度给分并列出所有 P0 问题，存到 report.md",
+    "should_trigger": true
+  },
+  {
+    "query": "check this markdown file for TODO markers, undefined terms, broken links and heading problems before we hand it to the dev team",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我核对测试用例文档覆盖了哪些需求，有没有边界用例缺失，用例编号和预期结果是否可验证：qa/test-cases.md",
+    "should_trigger": true
+  },
+  {
+    "query": "this task list has dependency issues, audit it for cycles, missing owners and unreasonable effort estimates: planning/tasks.md",
+    "should_trigger": true
+  },
+  {
+    "query": "发布前的最后一道关卡：把这封 TDD 技术设计文档从头到尾审查一遍，技术选型和性能目标有没有矛盾",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我把这份 PRD 改得更清晰一些，重写第 3 章的表述",
+    "should_trigger": false
+  },
+  {
+    "query": "给这个 markdown 文件统一标题编号和排版，让它更规整",
+    "should_trigger": false
+  },
+  {
+    "query": "review this pull request #142 — check the diff for bugs and suggest fixes",
+    "should_trigger": false
+  },
+  {
+    "query": "把这个会议纪要整理成一份结构化的项目文档",
+    "should_trigger": false
+  },
+  {
+    "query": "summarize this requirements doc in 3 bullet points for my boss",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我检查这段 TypeScript 代码的潜在 bug，特别是异步竞态",
+    "should_trigger": false
+  },
+  {
+    "query": "把这个 GDD 里的数值设计导成一张 Excel 表给我",
+    "should_trigger": false
+  },
+  {
+    "query": "翻译这份需求文档成英文，保留表格格式",
+    "should_trigger": false
+  },
+  {
+    "query": "给这份设计文档配几张示意图，重新排一下版面",
+    "should_trigger": false
+  },
+  {
+    "query": "这份文档太长了，帮我压缩到原来一半的长度，保留关键结论",
+    "should_trigger": false
+  }
+]
