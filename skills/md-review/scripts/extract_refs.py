@@ -29,6 +29,7 @@ def extract_refs(md_path):
     # Extract [text](url) links with balanced parentheses in the destination
     # ((?<!!) excludes ![alt](path) image syntax to avoid double counting)
     links = []
+    link_spans = []
     for m in re.finditer(r'(?<!!)\[([^\]]+)\]\(', content):
         start, depth, i = m.end(), 1, m.end()
         while i < len(content) and depth:
@@ -39,19 +40,27 @@ def extract_refs(md_path):
             i += 1
         if depth == 0:
             dest = content[start:i - 1].strip()
-            if dest.startswith("<") and dest.endswith(">"):
-                dest = dest[1:-1]
+            angle = re.match(r'^<([^>]*)>(?:\s+.*)?$', dest, re.S)
+            if angle:
+                dest = angle.group(1)
             else:
                 tm = re.match(r'(\S+)(?:\s+.*)?$', dest, re.S)
                 if tm:
                     dest = tm.group(1)
             links.append((m.group(1), dest))
+            link_spans.append((start, i - 1))
 
-    # Extract ![alt](path) images
-    images = re.findall(r'!\[([^\]]*)\]\(([^)]+)\)', content)
+    # 提取图片, 并把图片目标范围加入 link_spans, 避免 URL 被重复统计。
+    image_matches = list(re.finditer(r'!\[([^\]]*)\]\(([^)]+)\)', content))
+    images = [(m.group(1), m.group(2)) for m in image_matches]
+    for m in image_matches:
+        link_spans.append((m.start(2), m.end(2)))
 
-    # Extract <url> bare links
-    bare_urls = re.findall(r'<(https?://[^>]+)>', content)
+    # 提取 <url> 裸链接, 跳过已被链接或图片目标覆盖的范围。
+    bare_urls = []
+    for bm in re.finditer(r'<(https?://[^>]+)>', content):
+        if not any(bs <= bm.start() and bm.end() <= be for bs, be in link_spans):
+            bare_urls.append(bm.group(1))
 
     print("=== Markdown Reference Extraction ===")
     print(f"Document: {md_path}")

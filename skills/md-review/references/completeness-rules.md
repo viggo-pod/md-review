@@ -20,7 +20,7 @@ First determine the document type; different types have different completeness s
 - [ ] **Title**: a clear and unique H1 title (MD025)
 - [ ] **Overview**: the first 1-3 paragraphs state the document's purpose and scope
 - [ ] **Logical progression**: sections ordered by the reader's comprehension sequence
-- [ ] **Conclusion/Summary**: the document has a clear ending (not required but recommended)
+- [ ] **Conclusion/Summary**: the document has a clear ending (required; its absence is a completeness finding — see Rule 6)
 
 ### Content Depth
 
@@ -135,7 +135,7 @@ Uses the SCQA framework:
 
 ## Rule Index (count-based)
 
-Each rule below is one countable item and applies to every document: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. The absence of required content (e.g., a missing overview or conclusion) is itself a finding — never an N/A. N/A is reserved for items that genuinely cannot apply to the document and must be justified in the report. Dimension score = (rules with no finding) ÷ (total rules) × 100.
+Each rule below is one countable item and applies according to that rule's stated applicability: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. The absence of required content is a finding only when the selected document type or rule requires it. N/A is reserved for items that genuinely cannot apply to the document and must be justified in the report. Dimension score = (applicable rules with no finding) ÷ (applicable rules) × 100; justified-N/A rules are excluded from both numerator and denominator.
 
 | # | Rule |
 |---|---|
@@ -145,4 +145,3 @@ Each rule below is one countable item and applies to every document: a rule with
 | 4 | Key terms undefined |
 | 5 | Single-sentence paragraphs (need expansion) |
 | 6 | No conclusion/summary |
-

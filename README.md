@@ -16,12 +16,12 @@ Scenario-aware Markdown review with weighted scoring.
 
 **It finds bugs and logic errors that would break downstream implementation first, then checks scenario-specific completeness** — style and formatting are secondary.
 
-Reviews ONE Markdown document per invocation across 14 document scenarios (PRD, API spec, GDD, TDD, ADR, …) or in generic mode.
+Reviews ONE Markdown document per invocation across 21 document scenarios (PRD, API spec, GDD, TDD, ADR, lifecycle authoring docs, …) or in generic mode.
 
 ## Highlights
 
 - **Bug-first positioning** — Logic (30%) is the top dimension: formula/number contradictions, missing edge cases, broken flows. P0 (blocking) issues are reported regardless of focused dimensions.
-- **14 scenarios** — each with its own required-content checklist (acceptance criteria, 5W1H, endpoint contracts, error codes, test cases, …).
+- **21 scenarios** — each with its own required-content checklist (acceptance criteria, 5W1H, endpoint contracts, error codes, lifecycle authoring contracts, …).
 - **6 weighted dimensions** — Logic 30%, Scenario completeness 25%, Sections 15%, References 10%, Redundancy 10%, Format 10%. **Overall = Σ(dimension score × weight)**, 100-point scale; each dimension score is the ratio of satisfied items in its checklist or rule index (counted per applicable item) × 100.
 - **CI-ready** — `--solo` mode with exit-code gate (`--pass-threshold`, default 75) and a machine-readable `MD-REVIEW-SUMMARY` block as the last line of every report.
 - **Self-validating** — ships 12 count-based evals, 8 reference reports, injected-defect fixtures, a trigger-query set, and a one-command regression harness (`bash evals/run_self_test.sh`).
@@ -44,8 +44,15 @@ The scenario is optional; without one, the review runs in generic mode (scenario
 | `tdd` | Technical Design Document | system architecture, tech stack, coding standards, performance goals |
 | `ldd` | Level Design Document | level layout, player path, challenge configuration, pacing |
 | `concept` | Concept Design Document | game concept, market analysis, core selling points |
+| `intent` | Product Intent Document | problem, users, evidence, hypothesis, MVP, non-goals |
+| `capability` | Capability Analysis Document | capability contracts, dependencies, boundaries, gap routing |
+| `feature` | Feature Analysis Document | versioned feature inventory, acceptance, blueprints, sources |
+| `research` | Domain Borrow / Research Analysis | source evidence, borrow mapping, license boundaries, handoff |
 | `tld` | Task List Document | task decomposition, dependencies, effort estimates, owners |
 | `tcd` | Test Case Document | case IDs, test steps, inputs/outputs, requirement traceability |
+| `decq` | Pending Decision Register | entry IDs, open/closed state, prefilled options, decision-result field, machine-readable closure |
+| `issue` | GitHub Issue Draft | ticket skeleton, four sub-forms, state/label traceability, closure criteria, Fixes #N |
+| `gpr` | GitHub PR Description | summary, change list, test plan, breaking changes, linked issues |
 
 ## Requirements
 
@@ -75,7 +82,7 @@ The skill is defined by `SKILL.md`; it reads `references/` (rules + per-scenario
 | Option | Effect |
 |---|---|
 | `<path>` | Markdown file to review (single document; validated by the path gate first) |
-| `<scenario>` | One of the 14 scenarios above; omit for generic mode |
+| `<scenario>` | One of the 21 scenarios above; omit for generic mode |
 | `--dimensions` | Restrict to specific dimensions, e.g. `--dimensions 1,2` (logic + completeness). P0 detection is independent of this flag |
 | `--format full` | Complete report (default) |
 | `--format summary` | Score table only |
