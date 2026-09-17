@@ -156,7 +156,7 @@ Mark all of the following as 🔴 Error, because they can break the implementati
 
 ## Rule Index (count-based)
 
-Each rule below is one countable item and applies to every document: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. The absence of required content (e.g., a missing overview or conclusion) is itself a finding — never an N/A. N/A is reserved for items that genuinely cannot apply to the document and must be justified in the report. Dimension score = (applicable rules with no finding) ÷ (applicable rules) × 100; justified-N/A rules are excluded from both numerator and denominator.
+Determine per rule whether the document contains the construct it tests before counting it. Each applicable rule is one countable item: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. Mark absent constructs **N/A** with a reason; an N/A rule must not produce a finding. Dimension score = (applicable rules with no finding) ÷ (applicable rules) × 100; N/A rules are excluded from both numerator and denominator.
 
 | # | Rule |
 |---|---|
@@ -169,4 +169,3 @@ Each rule below is one countable item and applies to every document: a rule with
 | 7 | Vague statement (multiple interpretations) |
 | 8 | Unimplementable rule (no judgment standard or boundary) |
 | 9 | Sensitive information disclosure — real secret/credential/internal address (P0) |
-

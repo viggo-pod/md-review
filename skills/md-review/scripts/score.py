@@ -2,7 +2,9 @@
 """Weighted scoring: overall = Σ(dimension×weight), 0-100 validation, grade and risk (Phase 4 report).
 
 Usage: python3 score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]
+       python3 score.py --generic <logic> <sections> <references> <redundancy> <format> [--p0 N]
 Weights: Logic 30% / Scenario completeness 25% / Sections 15% / References 10% / Redundancy 10% / Format 10%
+Generic weights are the remaining five dimensions normalized to 100%.
 --p0 N: P0 (bug-level) issue count, used for the risk level (default 0).
 """
 
@@ -10,6 +12,8 @@ import sys
 
 WEIGHTS = [0.30, 0.25, 0.15, 0.10, 0.10, 0.10]
 NAMES = ["Logic (bug detection)", "Scenario completeness", "Sections", "References", "Redundancy", "Format"]
+GENERIC_WEIGHTS = [0.40, 0.20, 0.10 / 0.75, 0.10 / 0.75, 0.10 / 0.75]
+GENERIC_NAMES = ["Logic (bug detection)", "Sections", "References", "Redundancy", "Format"]
 
 def risk_level(total, p0):
     if total >= 80 and p0 == 0:
@@ -20,9 +24,9 @@ def risk_level(total, p0):
         return "High"
     return "Critical"
 
-def score(scores, p0):
-    if len(scores) != 6:
-        print(f"Error: expected 6 dimension scores, got {len(scores)}", file=sys.stderr)
+def score(scores, p0, weights=WEIGHTS, names=NAMES):
+    if len(scores) != len(weights):
+        print(f"Error: expected {len(weights)} dimension scores, got {len(scores)}", file=sys.stderr)
         sys.exit(2)
     for s in scores:
         if not (0 <= s <= 100):
@@ -30,10 +34,11 @@ def score(scores, p0):
             sys.exit(2)
     print("=== Weighted Score ===")
     total = 0.0
-    for n, w, s in zip(NAMES, WEIGHTS, scores):
+    for n, w, s in zip(names, weights, scores):
         wv = s * w
         total += wv
-        print(f"  {n}: {s:.0f} x {w:.0%} = {wv:.1f}")
+        precision = 1 if weights is GENERIC_WEIGHTS else 0
+        print(f"  {n}: {s:.0f} x {w:.{precision}%} = {wv:.1f}")
     print(f"  Overall: {total:.1f}/100")
     if total >= 90:
         grade, action = "Excellent", "Ready to publish; minor polish only"
@@ -49,6 +54,9 @@ def score(scores, p0):
 if __name__ == "__main__":
     args = sys.argv[1:]
     p0 = 0
+    generic = "--generic" in args
+    if generic:
+        args.remove("--generic")
     if "--p0" in args:
         i = args.index("--p0")
         try:
@@ -61,6 +69,9 @@ if __name__ == "__main__":
             sys.exit(2)
         del args[i:i + 2]
     if "--items" in args:
+        if generic:
+            print("Error: --items cannot be combined with --generic", file=sys.stderr)
+            sys.exit(2)
         i = args.index("--items")
         try:
             present, applicable = (int(x) for x in args[i + 1].split(":"))
@@ -77,12 +88,19 @@ if __name__ == "__main__":
         ratio = 100.0 if applicable == 0 else present / applicable * 100.0
         print(f"Item ratio: {present}/{applicable} = {ratio:.1f}/100")
         sys.exit(0)
-    if len(args) != 6:
-        print("Usage: python3 score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]")
+    expected = 5 if generic else 6
+    if len(args) != expected:
+        if generic:
+            print("Usage: python3 score.py --generic <logic> <sections> <references> <redundancy> <format> [--p0 N]")
+        else:
+            print("Usage: python3 score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]")
         sys.exit(1)
     try:
         scores = [float(a) for a in args[:6]]
     except ValueError:
         print("Error: arguments must be numbers", file=sys.stderr)
         sys.exit(2)
-    score(scores, p0)
+    if generic:
+        score(scores, p0, GENERIC_WEIGHTS, GENERIC_NAMES)
+    else:
+        score(scores, p0)

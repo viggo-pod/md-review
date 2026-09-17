@@ -22,7 +22,7 @@ Reviews ONE Markdown document per invocation across 21 document scenarios (PRD, 
 
 - **Bug-first positioning** — Logic (30%) is the top dimension: formula/number contradictions, missing edge cases, broken flows. P0 (blocking) issues are reported regardless of focused dimensions.
 - **21 scenarios** — each with its own required-content checklist (acceptance criteria, 5W1H, endpoint contracts, error codes, lifecycle authoring contracts, …).
-- **6 weighted dimensions** — Logic 30%, Scenario completeness 25%, Sections 15%, References 10%, Redundancy 10%, Format 10%. **Overall = Σ(dimension score × weight)**, 100-point scale; each dimension score is the ratio of satisfied items in its checklist or rule index (counted per applicable item) × 100.
+- **Scenario-aware weighted dimensions** — scenario reviews use Logic 30%, Scenario completeness 25%, Sections 15%, References 10%, Redundancy 10%, Format 10%; generic reviews omit scenario completeness and normalize the remaining five dimensions to 100%. Each dimension score is the ratio of satisfied items in its checklist or rule index (counted per applicable item) × 100.
 - **CI-ready** — `--solo` mode with exit-code gate (`--pass-threshold`, default 75) and a machine-readable `MD-REVIEW-SUMMARY` block as the last line of every report.
 - **Self-validating** — ships 12 count-based evals, 8 reference reports, injected-defect fixtures, a trigger-query set, and a one-command regression harness (`bash evals/run_self_test.sh`).
 

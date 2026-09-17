@@ -1,6 +1,6 @@
 # Full Review Report Template
 
-Fill in this template during Phase 4. Generic mode (no scenario): omit the "Missing Scenario Content" section and fill the "2. Scenario completeness" row with Score 100 / Weighted 25.0 (that dimension is non-applicable and scored 100) — the in-template notes mark these.
+Fill in this template during Phase 4. Generic mode (no scenario): omit the "Missing Scenario Content" section and the "2. Scenario completeness" row; normalize the remaining weights to Logic 40%, Sections 20%, References 13.3%, Redundancy 13.3%, and Format 13.3% with `score.py --generic`.
 
 # MD Review Report
 
@@ -47,7 +47,7 @@ Levels: 🔴 Error (must fix) / 🟡 Warning (should fix) / 🟢 Suggestion (opt
 | 6. Format | 10% | 90 | 9.0 | 1 | 0 |
 | **Overall** | 100% | - | **68.5** | **18** | **4** |
 
-> Generic mode (no scenario): keep the "2. Scenario completeness" row with Score **100** / Weighted **25.0** (the dimension is non-applicable and scored 100, keeping the overall consistent with `score.py`).
+> Generic mode (no scenario): omit the scenario-completeness row and compute the overall with the normalized five-dimension `score.py --generic` mode.
 
 ## Top 5 Issues
 

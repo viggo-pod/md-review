@@ -217,7 +217,8 @@ check("extract_refs: usage error without arg", run("extract_refs.py").returncode
 
 angle_fx = tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8")
 angle_fx.write('[titled](<docs/guide.md> "Guide") and [plain](docs/plain.md "T") '
-               'and [ext](<https://example.com/dup> "t")\n')
+               'and [ext](<https://example.com/dup> "t") '
+               'and ![remote](<https://example.com/logo.png> "logo")\n')
 angle_fx.close()
 ra = run("extract_refs.py", angle_fx.name)
 aout = ra.stdout
@@ -230,6 +231,9 @@ check("extract_refs: link title separated from destination",
           for line in aout.splitlines()))
 check("extract_refs: external angle destination not double-counted",
       "Bare URLs: 0" in aout and "-> https://example.com/dup" in aout)
+check("extract_refs: angle image destination not double-counted",
+      "Image references: 1" in aout and "Bare URLs: 0" in aout
+      and "-> https://example.com/logo.png" in aout)
 
 print()
 print("=" * 70)
@@ -243,6 +247,13 @@ check("score: weighted math (68.5)", "Overall: 68.5/100" in out)
 check("score: per-dim weighted lines", all(f"x {w:.0%}" in out for w in [0.30, 0.25, 0.15, 0.10]))
 check("score: grade Passing", "Grade: Passing" in out)
 check("score: risk Medium", "Risk: Medium" in out)
+
+r = run("score.py", "--generic", "60", "100", "100", "100", "100")
+check("score: generic mode exit 0", r.returncode == 0)
+check("score: generic mode normalizes remaining five dimensions",
+      "Overall: 84.0/100" in r.stdout
+      and "Scenario completeness" not in r.stdout
+      and "Logic (bug detection): 60 x 40.0%" in r.stdout)
 
 r = run("score.py", "100", "100", "100", "100", "100", "100")
 check("score: all-100 → 100", "Overall: 100.0/100" in r.stdout and "Grade: Excellent" in r.stdout and "Risk: Low" in r.stdout)
@@ -395,6 +406,15 @@ for ph, nums in sorted(phase_items.items()):
         check(f"Phase {ph} steps sequential {nums}", ok, f"nums={nums}")
         phase_ok = phase_ok and ok
 check("no step-numbering breaks in workflow phases", phase_ok)
+
+scenario_values = _re.findall(r"^\| `([^`]+)` \|", skill_md.read_text(encoding="utf-8"), _re.M)
+review_plan = (ROOT / "skills" / "md-review" / "example" / "review-plan.md").read_text(encoding="utf-8")
+missing_scenarios = [
+    value for value in scenario_values
+    if not _re.search(rf"\b{_re.escape(value)}\b", review_plan, _re.I)
+]
+check("review-plan: all registered scenarios listed", not missing_scenarios,
+      f"missing={missing_scenarios}")
 
 print()
 print("=" * 70)

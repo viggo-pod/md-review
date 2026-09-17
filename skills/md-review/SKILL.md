@@ -179,7 +179,7 @@ Checklists: load the matching file under references/scenarios/ (prd.md / adr.md 
 
 #### 3. Sections (15%, generic)
 
-Context first ("why" before "what"), basic structure (title / overview / progression / conclusion), doc-type required sections, SCQA (for technical proposals), incomplete markers (TODO / TBD / empty sections — **undefined terms and missing edge-case explanations are bug sources**).
+Context first ("why" before "what"), basic structure (title / overview / progression), a conclusion or next action when the document type needs one, doc-type required sections, SCQA (for technical proposals), incomplete markers (TODO / TBD / empty sections — **undefined terms and missing edge-case explanations are bug sources**).
 
 Rules: @./references/completeness-rules.md
 
@@ -205,7 +205,7 @@ Rules: @./references/format-rules.md
 
 #### Weighted scoring (100-point scale)
 
-**Overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — each dimension score is the count ratio from its checklist or rule index (see "Overall score" definition above). Compute the weighted overall with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]` (validates 0-100 and outputs grade + risk; `--p0` is the P0 issue count); `--items PRESENT:APPLICABLE` converts one dimension's item counts to its 0-100 score. In generic mode, pass `100` for the non-applicable scenario-completeness dimension — this contributes a fixed 25 points (0.25 × 100) to the overall score; the report templates keep that row visible with score 100.
+**Scenario-aware overall = Logic×0.30 + Scenario completeness×0.25 + Sections×0.15 + References×0.10 + Redundancy×0.10 + Format×0.10** — each dimension score is the count ratio from its checklist or rule index (see "Overall score" definition above). Compute it with `python3 <skill-dir>/scripts/score.py <d1> <d2> <d3> <d4> <d5> <d6> [--p0 N]`. For generic mode, omit the non-applicable scenario dimension and run `python3 <skill-dir>/scripts/score.py --generic <logic> <sections> <references> <redundancy> <format> [--p0 N]`; the remaining five dimensions are normalized to 100%. `--items PRESENT:APPLICABLE` converts one dimension's item counts to its 0-100 score. All score inputs are validated as 0-100 and the command outputs grade + risk.
 
 | Overall | Grade | Action |
 |---|---|---|
@@ -231,7 +231,7 @@ MD-REVIEW-SUMMARY
 File: <doc> | P0 bugs: N | Scenario gaps: N | Fixable: N | Generated: {timestamp}
 ```
 
-   Field semantics (CI contract): `P0 bugs` = blocking/bug-level issue count; `Scenario gaps` = missing/under-specified scenario-checklist items; `Fixable` = issues that carry a concrete fix suggestion in the report (mechanical or judgmental). The `--format fix` Auto-Fix Summary separately reports `Fixed: X | Could not auto-fix: Y` (mechanical fixes applied vs. left for judgment) — `Fixable` counts suggestions, not applied fixes.
+   Field semantics (CI contract): `P0 bugs` = blocking/bug-level issue count; `Scenario gaps` = missing/under-specified scenario-checklist items, or `0` in generic mode; `Fixable` = issues that carry a concrete fix suggestion in the report (mechanical or judgmental). The `--format fix` Auto-Fix Summary separately reports `Fixed: X | Could not auto-fix: Y` (mechanical fixes applied vs. left for judgment) — `Fixable` counts suggestions, not applied fixes.
 
    The `MD-REVIEW-SUMMARY` block must be the **last line of the output**: when `--output` is used, append it as the final line of the written file too (the report template ends with it), and repeat it in the stdout handoff.
 

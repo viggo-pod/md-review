@@ -73,7 +73,7 @@
         "Flags duplicate heading (redundancy)",
         "Flags undefined terms (ODS/DWD)",
         "No Missing Scenario Content section in generic mode",
-        "Scenario-completeness row kept at score 100 with weight applied"
+        "Scenario-completeness row omitted and the remaining five dimensions are normalized in generic mode"
       ]
     },
     {

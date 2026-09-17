@@ -7,7 +7,7 @@ Fill in this template during Phase 0 and present it for approval (interactive mo
 ### 1. Document Overview
 
 - **Document**: <path> | **Lines**: X | **Est. tokens**: ~Y
-- **Scenario**: [PRD / ADR / ADD / API / BRD / MRD / FSD / GDD / GDO / TDD / LDD / Concept / TLD / TCD / Generic]
+- **Scenario**: [PRD / ADR / ADD / API / BRD / MRD / FSD / GDD / GDO / TDD / LDD / Concept / Intent / Capability / Feature / Research / TLD / TCD / DECQ / ISSUE / GPR / Generic]
 - **Type guess**: [based on content features]
 
 ### 2. Dimensions & Priority
@@ -15,7 +15,7 @@ Fill in this template during Phase 0 and present it for approval (interactive mo
 | Dimension | Weight | Priority | Expected risk |
 |---|---|---|---|
 | Logic (bug detection) | 30% | P0 | High |
-| Scenario completeness | 25% | P0 | High |
+| Scenario completeness | 25% when a scenario is selected; otherwise N/A | P0 | High when selected |
 | Sections | 15% | P0 | Medium |
 | References | 10% | P1 | Medium |
 | Redundancy | 10% | P2 | Low |

@@ -25,7 +25,7 @@ This dimension carries only 10% of the overall weight. Detailed linting (item-by
 
 ## Rule Index (count-based)
 
-Each rule below is one countable item and applies to every document: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. The absence of required content (e.g., a missing overview or conclusion) is itself a finding — never an N/A. N/A is reserved for items that genuinely cannot apply to the document and must be justified in the report. Dimension score = (applicable rules with no finding) ÷ (applicable rules) × 100; justified-N/A rules are excluded from both numerator and denominator.
+Apply each rendering rule only when the corresponding Markdown construct exists. Each applicable rule is one countable item: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. Mark absent constructs **N/A** with a reason. Dimension score = (applicable rules with no finding) ÷ (applicable rules) × 100; N/A rules are excluded from both numerator and denominator.
 
 | # | Rule |
 |---|---|
@@ -37,4 +37,3 @@ Each rule below is one countable item and applies to every document: a rule with
 | 6 | Step-numbering break (gap or duplicate) in an ordered list |
 | 7 | Incomplete link syntax |
 | 8 | Relative path that does not resolve from the current document location |
-

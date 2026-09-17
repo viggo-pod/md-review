@@ -13,18 +13,18 @@ First determine the document type; different types have different completeness s
 | **Reference doc** | API reference, configuration instructions, spec definitions | Reference standard |
 | **General description** | Doesn't fit the above | General standard |
 
-## General Completeness Standard (applies to all types)
+## Baseline Completeness Standard (applies to all types)
 
 ### Basic Structure
 
 - [ ] **Title**: a clear and unique H1 title (MD025)
 - [ ] **Overview**: the first 1-3 paragraphs state the document's purpose and scope
 - [ ] **Logical progression**: sections ordered by the reader's comprehension sequence
-- [ ] **Conclusion/Summary**: the document has a clear ending (required; its absence is a completeness finding — see Rule 6)
+- [ ] **Ending when applicable**: decision, proposal, and analysis documents state a conclusion or next action; reference and configuration documents may end with their final definition or example
 
 ### Content Depth
 
-- [ ] Every point fully elaborated (no fewer than 2 sentences)
+- [ ] **Sufficient detail**: expand concepts enough to make the behavior or decision unambiguous; concise reference rows and executable steps are acceptable when complete
 - [ ] Key concepts and terms defined at first occurrence
 - [ ] Every section has a clear reason to exist
 - [ ] No "orphan paragraphs" (paragraphs unrelated to the rest)
@@ -135,7 +135,7 @@ Uses the SCQA framework:
 
 ## Rule Index (count-based)
 
-Each rule below is one countable item and applies according to that rule's stated applicability: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. The absence of required content is a finding only when the selected document type or rule requires it. N/A is reserved for items that genuinely cannot apply to the document and must be justified in the report. Dimension score = (applicable rules with no finding) ÷ (applicable rules) × 100; justified-N/A rules are excluded from both numerator and denominator.
+Select the document-type standard before counting. Each applicable rule applies according to that rule's stated applicability and is one countable item: a rule with at least one finding = 1 unmet item (occurrence counts reported as severity), and a rule with no finding is satisfied. Mark rules that do not fit the document type or its constructs **N/A** with a reason; the absence of required content is a finding only when the selected document type or rule requires it. Do not turn an optional ending or terse reference entry into a finding. Dimension score = (applicable rules with no finding) ÷ (applicable rules) × 100; N/A rules are excluded from both numerator and denominator.
 
 | # | Rule |
 |---|---|
@@ -143,5 +143,5 @@ Each rule below is one countable item and applies according to that rule's state
 | 2 | Missing required sections (per document type) |
 | 3 | Incomplete markers (TODO/TBD) |
 | 4 | Key terms undefined |
-| 5 | Single-sentence paragraphs (need expansion) |
-| 6 | No conclusion/summary |
+| 5 | Insufficient detail where needed for unambiguous use |
+| 6 | Missing conclusion/next action where the selected document type requires one |

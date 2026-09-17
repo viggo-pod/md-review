@@ -3,7 +3,7 @@
 ## Basic Info
 
 - **Document**: evals/docs/numbering-break.md | **Scenario**: Generic | **Size**: 43 lines / 137 words / ~221 tokens
-- Overall: 89.2/100 | Risk: Medium
+- Overall: 85.5/100 | Risk: Medium
 
 ## Executive Summary
 
@@ -29,15 +29,14 @@ Levels: 🔴 Error (must fix) / 🟡 Warning (should fix) / 🟢 Suggestion (opt
 
 | Dimension | Weight | Score | Weighted | Issues | Severe |
 |---|---|---|---|---|---|
-| 1. Logic | 30% | 83.3 | 25.0 | 1 | 1 (bug-level) |
-| 2. Scenario completeness | 25% | 100 | 25.0 | 0 | 0 |
-| 3. Sections | 15% | 83.3 | 12.5 | 1 | 0 |
-| 4. References | 10% | 100 | 10.0 | 0 | 0 |
-| 5. Redundancy | 10% | 100 | 10.0 | 0 | 0 |
-| 6. Format | 10% | 66.7 | 6.7 | 1 | 0 |
+| 1. Logic | 40% | 83.3 | 33.3 | 1 | 1 (bug-level) |
+| 3. Sections | 20% | 83.3 | 16.7 | 1 | 0 |
+| 4. References | 13.3% | 100 | 13.3 | 0 | 0 |
+| 5. Redundancy | 13.3% | 100 | 13.3 | 0 | 0 |
+| 6. Format | 13.3% | 66.7 | 8.9 | 1 | 0 |
 | **Overall** | 100% | - | **89.2** | **3** | **1** |
 
-> Generic mode: the "2. Scenario completeness" row is kept at Score 100 / Weighted 25.0 (non-applicable in generic mode, scored 100, consistent with `score.py`).
+> Generic mode: scenario completeness is omitted; the remaining five dimensions use normalized weights via `score.py --generic`.
 
 Count basis (rule-index ratios, N/A rules excluded):
 

@@ -26,8 +26,8 @@ def read_text_safe(md_path):
 def extract_refs(md_path):
     content = read_text_safe(md_path)
 
-    # Extract [text](url) links with balanced parentheses in the destination
-    # ((?<!!) excludes ![alt](path) image syntax to avoid double counting)
+    # 提取目标地址中允许嵌套括号的 [text](url) 链接。
+    # ((?<!!) 排除 ![alt](path), 避免图片被重复计为文本链接。
     links = []
     link_spans = []
     for m in re.finditer(r'(?<!!)\[([^\]]+)\]\(', content):
@@ -50,16 +50,25 @@ def extract_refs(md_path):
             links.append((m.group(1), dest))
             link_spans.append((start, i - 1))
 
-    # 提取图片, 并把图片目标范围加入 link_spans, 避免 URL 被重复统计。
-    image_matches = list(re.finditer(r'!\[([^\]]*)\]\(([^)]+)\)', content))
-    images = [(m.group(1), m.group(2)) for m in image_matches]
-    for m in image_matches:
-        link_spans.append((m.start(2), m.end(2)))
+    # 提取图片, 并记录目标地址范围, 避免角括号 URL 再被识别为裸 URL。
+    images = []
+    image_spans = []
+    for m in re.finditer(r'!\[([^\]]*)\]\(([^)]+)\)', content):
+        raw_dest = m.group(2).strip()
+        angle = re.match(r'^<([^>]*)>(?:\s+.*)?$', raw_dest, re.S)
+        if angle:
+            path = angle.group(1)
+        else:
+            tm = re.match(r'(\S+)(?:\s+.*)?$', raw_dest, re.S)
+            path = tm.group(1) if tm else raw_dest
+        images.append((m.group(1), path))
+        image_spans.append((m.start(2), m.end(2)))
 
-    # 提取 <url> 裸链接, 跳过已被链接或图片目标覆盖的范围。
+    # 提取 <url> 裸链接, 跳过已被文本链接或图片目标覆盖的范围。
     bare_urls = []
+    parsed_spans = link_spans + image_spans
     for bm in re.finditer(r'<(https?://[^>]+)>', content):
-        if not any(bs <= bm.start() and bm.end() <= be for bs, be in link_spans):
+        if not any(bs <= bm.start() and bm.end() <= be for bs, be in parsed_spans):
             bare_urls.append(bm.group(1))
 
     print("=== Markdown Reference Extraction ===")
