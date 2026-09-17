@@ -125,7 +125,7 @@
       "id": 7,
       "name": "error-paths",
       "prompt": "Error-handling paths: missing file / binary / non-UTF-8 / invalid scenario value / directory / non-md target -> per SKILL.md Error Handling + solo exit-code protocol",
-      "expected_output": "Missing file -> exit 2; binary detected and skipped without crash; non-UTF-8 processed as latin-1; invalid scenario lists the 17 valid values and exits with code 2; directory and non-md targets rejected by the path gate",
+      "expected_output": "Missing file -> exit 2; binary detected and skipped without crash; non-UTF-8 processed as latin-1; invalid scenario lists the 21 valid values and exits with code 2; directory and non-md targets rejected by the path gate",
       "files": [
         "evals/docs/binary-file.md",
         "evals/docs/latin1-file.md"
@@ -134,7 +134,7 @@
         "Missing file rejected by validate_path.py with exit 2",
         "Binary file detected (NUL check) and rejected/skipped without crash",
         "Non-UTF-8 file processed as latin-1 without crash",
-        "Invalid scenario value lists the 17 valid values and exits with code 2 (no silent generic fallback)",
+        "Invalid scenario value lists the 21 valid values and exits with code 2 (no silent generic fallback)",
         "Directory and non-md targets rejected by the path gate with exit 2"
       ]
     },

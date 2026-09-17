@@ -92,7 +92,7 @@ checks = {
     "missing-file exit 2": ("missing" in t.lower() and "**2**" in t),
     "binary detected/skipped": ("binary" in t.lower() and ("skip" in t.lower() or "detect" in t.lower())),
     "non-utf8 encoding detected": ("latin-1" in t.lower() or "encoding" in t.lower() or "utf-8" in t.lower()),
-    "invalid scenario lists all 17 valid values with exit 2": all(s in t for s in ("prd", "adr", "add", "api", "brd", "mrd", "fsd", "gdd", "gdo", "tdd", "ldd", "concept", "tld", "tcd", "decq", "issue", "gpr")) and "code **2**" in t,
+    "invalid scenario lists all 21 valid values with exit 2": all(s in t for s in ("prd", "adr", "add", "api", "brd", "mrd", "fsd", "gdd", "gdo", "tdd", "ldd", "concept", "intent", "capability", "feature", "research", "tld", "tcd", "decq", "issue", "gpr")) and "code **2**" in t,
 }
 for name, okv in checks.items():
     print(f"    {'PASS' if okv else 'FAIL'}  {name}")
