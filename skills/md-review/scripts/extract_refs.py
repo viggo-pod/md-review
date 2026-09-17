@@ -50,10 +50,13 @@ def extract_refs(md_path):
             links.append((m.group(1), dest))
             link_spans.append((start, i - 1))
 
-    # Extract ![alt](path) images
-    images = re.findall(r'!\[([^\]]*)\]\(([^)]+)\)', content)
+    # 提取图片，并把图片目标范围加入 link_spans，避免 URL 被重复统计。
+    image_matches = list(re.finditer(r'!\[([^\]]*)\]\(([^)]+)\)', content))
+    images = [(m.group(1), m.group(2)) for m in image_matches]
+    for m in image_matches:
+        link_spans.append((m.start(2), m.end(2)))
 
-    # Extract <url> bare links, skipping URLs already parsed as link destinations
+    # 提取 <url> 裸链接，跳过已被链接或图片目标覆盖的范围。
     bare_urls = []
     for bm in re.finditer(r'<(https?://[^>]+)>', content):
         if not any(bs <= bm.start() and bm.end() <= be for bs, be in link_spans):

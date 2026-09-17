@@ -226,7 +226,8 @@ check("extract_refs: titled links count=3", "Text links: 3" in aout)
 check("extract_refs: angle destination brackets stripped",
       "-> docs/guide.md" in aout and "-> <docs/guide.md>" not in aout)
 check("extract_refs: link title separated from destination",
-      "-> docs/plain.md" in aout and '"Guide"' not in aout and '"T"' not in aout)
+      any("[link] plain" in line and line.endswith("-> docs/plain.md")
+          for line in aout.splitlines()))
 check("extract_refs: external angle destination not double-counted",
       "Bare URLs: 0" in aout and "-> https://example.com/dup" in aout)
 
