@@ -5,7 +5,7 @@
 Scenario-aware Markdown review with weighted scoring.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/viggo-pod/md-review)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/viggo-pod/md-review)
 [![Skills](https://skills.sh/b/viggo-pod/md-review)](https://skills.sh/viggo-pod/md-review/md-review)
 [![ModelScope](https://img.shields.io/badge/ModelScope-viggopod%2Fmd--review-6600ff.svg)](https://www.modelscope.cn/skills/viggopod/md-review)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/viggo-pod/md-review/pulls)
