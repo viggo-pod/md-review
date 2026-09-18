@@ -42,7 +42,7 @@ The scenario is optional. Without one, the review runs in generic mode (the scen
 | `research` | Domain Borrow / Research Analysis | source evidence, adopt/adapt/reject mapping, license boundaries |
 | `tld` | Task List Document | task decomposition, dependencies, effort estimates, owners |
 | `tcd` | Test Case Document | case IDs, test steps, inputs/outputs, requirement traceability |
-| `decq` | Pending Decision Register | entry IDs, open/closed state, prefilled options, decision-result field, machine-readable closure |
+| `decq` | Durable Decision Queue | decision input, local human handoff, open/closed state, ADR link, machine-readable resume and routing |
 | `issue` | GitHub Issue Draft | ticket skeleton, four sub-forms, state/label traceability, closure criteria, Fixes #N |
 | `gpr` | GitHub PR Description | summary, change list, test plan, breaking changes, linked issues |
 
@@ -151,6 +151,8 @@ Rules: @./references/logic-rules.md
 
 Load the checklist for the scenario and verify every required item, both presence and quality. Every required item is a countable item: missing or under-specified = 1 unmet item in the scenario-completeness ratio. Each checklist contains "Core Questions" (what editors must address) and "Key Focus". Required content per scenario:
 
+Scenario checklist boundary: scenario checklists validate only the document type's intrinsic content contract. They must not require a specific router, upstream or downstream skill, implementation-only state enum, workflow artifact path, version layer, or ID namespace. Protocol-intrinsic states and handoff artifacts remain in scope when removing them would change the document type's meaning (for example, DECQ's durable human handoff and machine-judgeable open/closed state). If host routing needs implementation bindings, apply them through an external adapter rule; the checklist only verifies that the document declares and coherently records its sources, consumers, states, gaps, and handoff boundaries.
+
 **Report every checklist item individually.** An item that is absent or under-specified must appear as its own entry in the Missing Scenario Content section — do not merge several thin items into one row (e.g. folding an incomplete Physical View into "scalability content") just because the document also has larger P0 defects. Placeholder markers in the source ("no further details", "TBD", "to be defined", "lorem ipsum") count as under-specified.
 
 - **PRD**: requirement list (unique IDs) / user stories / business rules / quantifiable acceptance criteria / 5W1H
@@ -166,12 +168,12 @@ Load the checklist for the scenario and verify every required item, both presenc
 - **LDD**: level list / layout / player path / challenge pacing / metrics / interactive element list
 - **Concept**: concept appeal / market potential / competitor analysis / go-no-go rationale / core selling points
 - **Intent**: problem / users / evidence / hypothesis / MVP / non-goals / open questions
-- **Capability**: capability IDs / inputs-outputs / failure paths / dependencies / gap direction
+- **Capability**: capability IDs / inputs-outputs / failure paths / dependencies / gap impact and resolution
 - **Feature**: versioned feature inventory / acceptance / blueprint / source / handoff
 - **Research**: source evidence / borrow mapping / license boundary / confidence / handoff
 - **TLD**: task decomposition granularity / dependencies / effort estimates / owners & acceptance criteria / task list
 - **TCD**: positive / boundary / exception coverage / preconditions / verifiable expected results / requirement traceability / test case set
-- **DECQ**: register skeleton (unique entry IDs + open/closed status) / per-entry background, ≥2 options with prefilled recommendation, decision-result field / machine-judgeable closure criterion (result non-empty, no placeholder residue) / consumption order & dependency rules / final disposition (archive or ADR promotion)
+- **DECQ**: durable decision input and human handoff / local persisted register or ADR link / open/closed state with machine-judgeable closure / no background blocking or polling / deterministic resume, routing, output, dependency and final disposition (archive or ADR promotion)
 - **ISSUE**: ticket skeleton (number, state + close reason, declared sub-form, labels/assignee/milestone) / body per declared sub-form (work ticket, clarification, decision entry, defect report) / linked artifacts (Fixes #N) / decidable closure criteria
 - **GPR**: summary / enumerated change list / test plan / breaking changes & migration / linked issues with closing keywords / draft open questions
 
@@ -297,7 +299,7 @@ Solo-mode exit codes (CI gate): `0` = no P0 and score ≥ `--pass-threshold`; `1
 - `references/scenarios/research.md` — Domain Borrow / Research Analysis
 - `references/scenarios/tld.md` — Task List Document
 - `references/scenarios/tcd.md` — Test Case Document
-- `references/scenarios/decq.md` — Pending Decision Register (Decision Queue)
+- `references/scenarios/decq.md` — Durable Decision Queue
 - `references/scenarios/issue.md` — GitHub Issue Draft
 - `references/scenarios/gpr.md` — GitHub PR Description
 

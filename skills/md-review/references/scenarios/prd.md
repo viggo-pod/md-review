@@ -3,7 +3,7 @@
 Enabled when the scenario parameter is `prd`. Checks whether the product requirements document contains the following content and assesses its completeness.
 
 ## Core Questions (editors must address)
-1. Is the requirement source traceable to the MRD or user research?
+1. Is the requirement source traceable to a declared source (for example, an MRD or user research when applicable)?
 2. Are acceptance criteria quantified (e.g., response time, success rate)?
 3. Is priority (P0/P1/P2) explicitly assigned?
 
@@ -49,4 +49,3 @@ User stories + feature flows + business rules
 - Vague requirement descriptions ("better experience" without concrete standards)
 - Requirements without numbers (untraceable)
 - Untestable acceptance criteria ("the system should work well")
-
