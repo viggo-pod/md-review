@@ -299,7 +299,7 @@ Solo-mode exit codes (CI gate): `0` = no P0 and score ≥ `--pass-threshold`; `1
 - `references/scenarios/research.md` — Domain Borrow / Research Analysis
 - `references/scenarios/tld.md` — Task List Document
 - `references/scenarios/tcd.md` — Test Case Document
-- `references/scenarios/decq.md` — Pending Decision Register (Decision Queue)
+- `references/scenarios/decq.md` — Durable Decision Queue
 - `references/scenarios/issue.md` — GitHub Issue Draft
 - `references/scenarios/gpr.md` — GitHub PR Description
 

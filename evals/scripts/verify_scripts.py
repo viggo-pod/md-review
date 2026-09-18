@@ -412,11 +412,45 @@ scenario_rule_paths = [
     for name in ("intent", "capability", "research", "feature")
 ]
 route_bound_pattern = _re.compile(
-    r"\b(?:PRD|Architecture|LOST|RECOMMENDED|upstream|downstream|rollout|WIR|Cross-App|App)\b"
-    r"|\b(?:2|3|4)\.x\b"
+    r"\b(?:Architecture|LOST|RECOMMENDED|upstream|downstream|rollout|WIR|Cross-App|App)\b"
+    r"|\b(?i:router|workflow|state\s+enum|artifact\s+path|ID\s+namespace)\b"
 )
+route_bound_version_pattern = _re.compile(r"\b(?:v[2-4](?:\.\d+)?|[2-4]\.(?:x|\d+))\b", _re.I)
+route_context_pattern = _re.compile(
+    r"\b(?i:router|workflow|state\s+enum|artifact\s+path|ID\s+namespace|route|routing|lifecycle|profile|upstream|downstream|rollout)\b"
+)
+
+
+def find_route_bound_hits(text):
+    hits = []
+    for line in text.splitlines():
+        hits.extend(match.group(0) for match in route_bound_pattern.finditer(line))
+        if route_context_pattern.search(line):
+            hits.extend(match.group(0) for match in route_bound_version_pattern.finditer(line))
+    return hits
+
+
+route_bound_fixtures = [
+    ("router", "A host router selects the next document", True),
+    ("workflow", "The workflow owns the next route", True),
+    ("state enum", "The implementation state enum is fixed", True),
+    ("artifact path", "The workflow artifact path is fixed", True),
+    ("ID namespace", "The ID namespace is host-defined", True),
+    ("v2", "The workflow uses v2", True),
+    ("2.0", "The artifact path targets version 2.0", True),
+    ("intrinsic PRD source", "Source Register: cite the applicable PRD source", False),
+    ("intrinsic document version", "Version Applicability: state the applicable version v2", False),
+]
+for fixture_name, fixture_text, expected_hit in route_bound_fixtures:
+    fixture_hits = find_route_bound_hits(fixture_text)
+    check(
+        f"route-bound matcher fixture: {fixture_name}",
+        bool(fixture_hits) == expected_hit,
+        f"hits={fixture_hits}",
+    )
+
 route_bound_hits = {
-    str(path.relative_to(ROOT)): route_bound_pattern.findall(path.read_text(encoding="utf-8"))
+    str(path.relative_to(ROOT)): find_route_bound_hits(path.read_text(encoding="utf-8"))
     for path in scenario_rule_paths
 }
 route_bound_hits = {path: hits for path, hits in route_bound_hits.items() if hits}
