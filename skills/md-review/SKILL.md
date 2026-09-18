@@ -37,11 +37,11 @@ The scenario is optional. Without one, the review runs in generic mode (the scen
 | `ldd` | Level Design Document | level layout, player path, challenge configuration, pacing |
 | `concept` | Concept Design Document | game concept, market analysis, core selling points |
 | `intent` | Product Intent Document | problem, users, evidence, hypothesis, MVP, non-goals |
-| `capability` | Capability Analysis Document | capability contracts, dependencies, boundaries, gap routing |
-| `feature` | Feature Analysis Document | versioned feature inventory, acceptance, blueprints, sources |
-| `research` | Domain Borrow / Research Analysis | source evidence, adopt/adapt/reject mapping, license boundaries |
+| `capability` | Capability Analysis Document | capability IDs, inputs-outputs, failure paths, dependencies, gap impact and resolution |
+| `feature` | Feature Analysis Document | versioned feature inventory, acceptance, blueprint, source, handoff |
+| `research` | Domain Borrow / Research Analysis | source evidence, borrow mapping, license boundary, confidence, handoff |
 | `tld` | Task List Document | task decomposition, dependencies, effort estimates, owners |
-| `tcd` | Test Case Document | case IDs, test steps, inputs/outputs, requirement traceability |
+| `tcd` | Test Case Document | positive, boundary, exception coverage, preconditions, verifiable expected results, requirement traceability, test case set |
 | `decq` | Durable Decision Queue | decision input, local human handoff, open/closed state, ADR link, machine-readable resume and routing |
 | `issue` | GitHub Issue Draft | ticket skeleton, four sub-forms, state/label traceability, closure criteria, Fixes #N |
 | `gpr` | GitHub PR Description | summary, change list, test plan, breaking changes, linked issues |
@@ -68,7 +68,7 @@ The scenario is optional. Without one, the review runs in generic mode (the scen
 - **path** — the Markdown file to review
 - **Scenario (optional arg 1)** — document scenario; omit to review as generic (skips the scenario-completeness dimension)
 - `--dimensions` — restrict to specific dimensions (default: all), e.g. `--dimensions 1,2` (logic + scenario completeness only); when focusing on specific dimensions, Error-level issues must still be flagged. **P0 (blocking) determination is independent of `--dimensions`**: a P0 found in any dimension — including non-focused ones — still sets the solo exit code to `1` and is listed in the report
-- `--format` — `full` (default) complete report / `summary` score table only / `fix` report + auto-fix
+- `--format` — `full` (default) complete report / `summary` score table plus `MD-REVIEW-SUMMARY` handoff / `fix` report + auto-fix
 - `--solo` — non-interactive mode, see Modes below
 - `--pass-threshold` — solo-mode exit-code gate on the overall score (default 75)
 - `--output` — write the report to a file (useful in solo mode / CI)
@@ -84,9 +84,9 @@ Output: a review plan first (approval gate), then a full report with weighted sc
 Input: `/md-review docs/requirements.md prd --solo --pass-threshold 75`
 Output: report to stdout ending with the `MD-REVIEW-SUMMARY` block; exit code 0 (no P0, score ≥ 75) / 1 (P0 issues or below threshold) / 2 (error).
 
-**Example 3: Score table only**
+**Example 3: Score table and handoff**
 Input: `/md-review docs/api-spec.md api --format summary`
-Output: weighted score table only, no issue details.
+Output: weighted score table plus the machine-readable `MD-REVIEW-SUMMARY` handoff, without issue details.
 
 ## Modes
 

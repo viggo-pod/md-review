@@ -45,12 +45,12 @@ The scenario is optional; without one, the review runs in generic mode (scenario
 | `ldd` | Level Design Document | level layout, player path, challenge configuration, pacing |
 | `concept` | Concept Design Document | game concept, market analysis, core selling points |
 | `intent` | Product Intent Document | problem, users, evidence, hypothesis, MVP, non-goals |
-| `capability` | Capability Analysis Document | capability contracts, dependencies, boundaries, gap routing |
-| `feature` | Feature Analysis Document | versioned feature inventory, acceptance, blueprints, sources |
-| `research` | Domain Borrow / Research Analysis | source evidence, borrow mapping, license boundaries, handoff |
+| `capability` | Capability Analysis Document | capability IDs, inputs-outputs, failure paths, dependencies, gap impact and resolution |
+| `feature` | Feature Analysis Document | versioned feature inventory, acceptance, blueprint, source, handoff |
+| `research` | Domain Borrow / Research Analysis | source evidence, borrow mapping, license boundary, confidence, handoff |
 | `tld` | Task List Document | task decomposition, dependencies, effort estimates, owners |
-| `tcd` | Test Case Document | case IDs, test steps, inputs/outputs, requirement traceability |
-| `decq` | Pending Decision Register | entry IDs, open/closed state, prefilled options, decision-result field, machine-readable closure |
+| `tcd` | Test Case Document | positive, boundary, exception coverage, preconditions, verifiable expected results, requirement traceability, test case set |
+| `decq` | Durable Decision Queue | durable decision input, human handoff, open/closed state, ADR link, machine-readable resume and routing |
 | `issue` | GitHub Issue Draft | ticket skeleton, four sub-forms, state/label traceability, closure criteria, Fixes #N |
 | `gpr` | GitHub PR Description | summary, change list, test plan, breaking changes, linked issues |
 
@@ -85,7 +85,7 @@ The skill is defined by `SKILL.md`; it reads `references/` (rules + per-scenario
 | `<scenario>` | One of the 21 scenarios above; omit for generic mode |
 | `--dimensions` | Restrict to specific dimensions, e.g. `--dimensions 1,2` (logic + completeness). P0 detection is independent of this flag |
 | `--format full` | Complete report (default) |
-| `--format summary` | Score table only |
+| `--format summary` | Score table plus the `MD-REVIEW-SUMMARY` handoff; no issue details |
 | `--format fix` | Report + auto-fix. Only safe mechanical fixes are applied (link-text repairs, filler-word replacements, echo-title removals, trailing newlines); everything requiring judgment is reported unfixed |
 | `--solo` | Non-interactive mode for CI |
 | `--pass-threshold N` | Solo-mode exit-code gate on the overall score (default 75) |
@@ -126,15 +126,15 @@ Review a PRD in solo mode; exit 0 if no blocking issues and score ≥ 75.
 /md-review docs/api-spec.md api --format summary
 ```
 
-Score-table-only review of an API document.
+Score-table and machine-readable handoff review of an API document, without issue details.
 
 ## Quality evidence
 
 The repo includes its own evaluation suite under `evals/`:
 
 - `bash evals/run_self_test.sh` — regression harness: scripted checks (script function-point verification via `verify_scripts.py`, registry integrity) always run; checks for locally generated reports under the ignored `evals/reports/` directory run when those reports are present.
-- `evals/docs/` — 23 fixtures: 16 scenario documents with injected defects, 3 clean documents, plus binary/non-UTF-8/step-numbering/generic edge cases.
-- `evals/evals.json` — 12 count-based eval definitions (4 defect-scenario reviews, generic review, 3 clean-doc precision, error paths, step-numbering, vague-rules, sensitive-info, path-gate).
+- `evals/docs/` — 23 fixtures: 14 scenario fixtures with injected defects, 2 generic defect fixtures, 1 generic review fixture, 3 clean documents, and 3 edge-case fixtures (binary, non-UTF-8, step-numbering).
+- `evals/evals.json` — 12 count-based eval definitions (3 defect-scenario reviews, 1 generic review, 3 clean-doc precision checks, error paths, step-numbering, vague-rules, sensitive-info, path-gate).
 - `evals/reports/` — local eval output only; ignored by Git and not published.
 - `evals/trigger-eval-set.json` — 20 trigger/no-trigger queries validating skill activation.
 
