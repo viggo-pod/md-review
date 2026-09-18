@@ -407,6 +407,25 @@ for ph, nums in sorted(phase_items.items()):
         phase_ok = phase_ok and ok
 check("no step-numbering breaks in workflow phases", phase_ok)
 
+scenario_rule_paths = [
+    ROOT / "skills" / "md-review" / "references" / "scenarios" / f"{name}.md"
+    for name in ("intent", "capability", "research", "feature")
+]
+route_bound_pattern = _re.compile(
+    r"\b(?:PRD|Architecture|LOST|RECOMMENDED|upstream|downstream|rollout|WIR|Cross-App|App)\b"
+    r"|\b(?:2|3|4)\.x\b"
+)
+route_bound_hits = {
+    str(path.relative_to(ROOT)): route_bound_pattern.findall(path.read_text(encoding="utf-8"))
+    for path in scenario_rule_paths
+}
+route_bound_hits = {path: hits for path, hits in route_bound_hits.items() if hits}
+check(
+    "scenario checklists remain decoupled from lifecycle routing",
+    not route_bound_hits,
+    f"hits={route_bound_hits}",
+)
+
 scenario_values = _re.findall(r"^\| `([^`]+)` \|", skill_md.read_text(encoding="utf-8"), _re.M)
 review_plan = (ROOT / "skills" / "md-review" / "example" / "review-plan.md").read_text(encoding="utf-8")
 missing_scenarios = [

@@ -34,7 +34,7 @@ Change narrative + merge-safety evidence + issue traceability
 - [ ] **Who**: Who reviews and owns it (reviewers, code owners)?
 - [ ] **When**: When should it merge (milestone, release train, time-sensitive window)?
 - [ ] **Where**: Which components/environments does it touch (flags, deploy notes)?
-- [ ] **How**: How is it rolled out and verified (test/rollout chain)?
+- [ ] **How**: How is it delivered and verified (test, deployment, or another applicable release process)?
 
 ## Completeness Issue Markers
 - Summary missing or restating the title only (intent must be reverse-engineered from the diff)

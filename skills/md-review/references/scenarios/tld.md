@@ -11,7 +11,7 @@ Enabled when the scenario parameter is `tld`. Checks whether the task list docum
 ## Key Focus
 Task decomposition + dependency relationships + effort estimation + owner assignment
 - Includes: **Task List** (with ID, description, priority, status, estimated person-days)
-- Linked to PRD/ADD, maintained by the engineering manager, dynamically updated
+- May reference PRD/ADD when applicable; ownership and update cadence should be stated by the document
 
 ## Required Content — count-based scoring: each applicable item adds 1 to the denominator, a satisfied item adds 1 to the numerator, a missing or under-specified item is unmet, and N/A items (justified in the report) are excluded from both.
 
@@ -36,7 +36,7 @@ Task decomposition + dependency relationships + effort estimation + owner assign
 - [ ] **Priority**: Are tasks tiered (P0/P1/P2)?
 - [ ] **Status Field**: Is the status (todo/in progress/blocked/done) defined?
 - [ ] **Acceptance Criteria**: Does each task have a testable completion standard (DoD)?
-- [ ] **Traceability**: Are tasks linked to PRD/ADD requirement items (traceability)?
+- [ ] **Traceability**: Are tasks linked to applicable requirement or design items (for example, PRD/ADD items when those artifacts exist)?
 
 ### 5W1H Check (task context)
 - [ ] **What**: What does each task do?
@@ -51,4 +51,3 @@ Task decomposition + dependency relationships + effort estimation + owner assign
 - Tasks without owners (nobody responsible = nobody executes)
 - Estimates without basis ("about X days" without explanation)
 - Tasks without acceptance criteria (completion cannot be judged)
-

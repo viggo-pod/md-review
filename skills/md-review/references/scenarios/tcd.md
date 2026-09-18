@@ -6,7 +6,7 @@ Enabled when the scenario parameter is `tcd`. Checks whether the test case docum
 1. Do the cases cover all happy-path flows, boundary values, and exception scenarios?
 2. Are the prerequisites clear (e.g., user state, data preparation)?
 3. Are expected results verifiable (not vague descriptions)?
-4. Is a traceability relationship established with requirement items in the PRD/FSD?
+4. Is a traceability relationship established with applicable requirement or specification items (for example, PRD/FSD items when those artifacts exist)?
 
 ## Key Focus
 Case numbering + test steps + input data + expected output + prerequisites
@@ -30,7 +30,7 @@ Case numbering + test steps + input data + expected output + prerequisites
 
 ### Prerequisites and Traceability
 - [ ] **Prerequisites**: Are each case's prerequisites clear (user state/data preparation/environment)?
-- [ ] **Requirement Traceability**: Are cases linked to requirement IDs in the PRD/FSD (traceability)?
+- [ ] **Requirement Traceability**: Are cases linked to applicable requirement or specification IDs (for example, PRD/FSD IDs when those artifacts exist)?
 - [ ] **Priority**: Are cases tiered (P0 critical path/P1 important/P2 general)?
 
 ### Execution and Management
@@ -51,4 +51,3 @@ Case numbering + test steps + input data + expected output + prerequisites
 - No prerequisites (executors don't know how to prepare)
 - Cases without requirement traceability (coverage cannot be proven)
 - Only happy-path flows covered (no boundary/exception)
-
