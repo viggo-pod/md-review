@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+"""本地 Markdown 质量门；输出可供 workflow gate 解析的审查摘要。"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+
+SCENARIO_CORE = {
+    "adr": {
+        "status": ("status", "状态"),
+        "context": ("context", "背景"),
+        "decision": ("decision", "决定", "选择"),
+        "alternatives": ("alternatives", "alternative", "选项", "候选", "被否"),
+        "consequences": ("consequences", "consequence", "后果", "影响"),
+        "impact": ("impact", "影响范围", "affected", "scope", "范围"),
+    },
+}
+
+
+def _valid_path(path: Path) -> str:
+    if not path.is_file() or path.suffix.lower() != ".md":
+        raise ValueError(f"expected a single Markdown file: {path}")
+    raw = path.read_bytes()
+    if b"\x00" in raw:
+        raise ValueError(f"binary Markdown is not reviewable: {path}")
+    return raw.decode("utf-8")
+
+
+def _contains(text: str, terms: tuple[str, ...]) -> bool:
+    lowered = text.casefold()
+    return any(term.casefold() in lowered for term in terms)
+
+
+def _review(path: Path, scenario: str) -> dict[str, object]:
+    text = _valid_path(path)
+    checks: list[dict[str, object]] = []
+    checks.append({"name": "non-empty", "pass": bool(text.strip()) and len(text) >= 200})
+    checks.append({"name": "no-incomplete-markers", "pass": not bool(re.search(
+        r"(?im)^\s*[-*+]?\s*(?:TODO|FIXME|HACK|WIP|TBD|待定|占位)(?:\s*:|\s|$)", text
+    ))})
+    headings = re.findall(r"(?m)^\s*#{1,6}\s+.+$", text)
+    checks.append({"name": "headings", "pass": len(headings) >= 2})
+    checks.append({"name": "balanced-fences", "pass": text.count("```") % 2 == 0})
+    links = re.findall(r"(?<!!)\[[^\]]+\]\(([^)]+)\)", text)
+    local_links_ok = all(target.startswith(("http://", "https://", "#", "../../")) for target in links)
+    checks.append({"name": "links", "pass": local_links_ok})
+    scenario_checks = []
+    for name, terms in SCENARIO_CORE.get(scenario, {}).items():
+        passed = _contains(text, terms)
+        scenario_checks.append({"name": name, "pass": passed})
+        checks.append({"name": f"scenario:{name}", "pass": passed})
+    applicable = len(checks)
+    passed = sum(1 for check in checks if check["pass"])
+    score = round(passed * 100 / applicable, 2) if applicable else 0
+    p0 = not all(check["pass"] for check in checks[:2])
+    return {
+        "file": str(path.resolve()),
+        "scenario": scenario,
+        "mode": "deterministic-cli",
+        "quality_score": score,
+        "p0_detected": p0,
+        "scenario_gaps": sum(1 for check in scenario_checks if not check["pass"]),
+        "checks": checks,
+        "status": "PASS" if score >= 75 and not p0 else "FAIL",
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path", type=Path)
+    parser.add_argument("scenario", nargs="?", default="generic")
+    parser.add_argument("--solo", action="store_true")
+    parser.add_argument("--pass-threshold", type=float, default=75)
+    parser.add_argument("--format", choices=("full", "summary"), default="full")
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    try:
+        result = _review(args.path, args.scenario)
+    except (OSError, UnicodeError, ValueError) as error:
+        print(f"md-review error: {error}", file=sys.stderr)
+        return 2
+    result["status"] = "PASS" if result["quality_score"] >= args.pass_threshold and not result["p0_detected"] else "FAIL"
+    if args.format == "full":
+        for check in result["checks"]:
+            mark = "PASS" if check["pass"] else "FAIL"
+            print(f"[{mark}] {check['name']}")
+    summary = "MDREVIEW-SUMMARY " + json.dumps(result, ensure_ascii=False, sort_keys=True)
+    print(summary)
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(summary + "\n", encoding="utf-8")
+    return 0 if result["status"] == "PASS" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
